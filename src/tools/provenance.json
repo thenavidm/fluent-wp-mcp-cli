@@ -1,0 +1,59 @@
+{
+  "checked": "2026-10-03",
+  "source": "https://developers.fluentcrm.com/rest-api/; https://dev.fluentcommunity.co/restapi/; https://github.com/fluentform/fluentform",
+  "nativeOperations": 47,
+  "crm": 17,
+  "community": 23,
+  "forms": 6,
+  "wordpress": 1,
+  "upstreamSchemaDocuments": {
+    "crm": 361,
+    "community": 263
+  },
+  "sourcePins": [
+    {
+      "repo": "fluentcrm/fluent-crm-developers-docs",
+      "sha": "64a8e6950023e4e81f4fff1be708253e1c3f066a",
+      "archiveBytes": 5040568,
+      "sourceInspectedOnly": true,
+      "vendorCodeExecuted": false
+    },
+    {
+      "repo": "carlosrodera/fluent-mcp-servers",
+      "sha": "0c28e825938a44eeae0b7f415819e036f923ca43",
+      "archiveBytes": 77850,
+      "sourceInspectedOnly": true,
+      "vendorCodeExecuted": false
+    },
+    {
+      "repo": "fluentform/fluentform-developer-docs",
+      "sha": "f083ac6d3bef3df16c2629b5eb1bb0720d6e072e",
+      "archiveBytes": 1633633,
+      "sourceInspectedOnly": true,
+      "vendorCodeExecuted": false
+    },
+    {
+      "repo": "WPManageNinja/fluent-community-developer-docs",
+      "sha": "c5510cbb76f716958c723b024676641cf39ca810",
+      "sourceInspectedOnly": true,
+      "vendorCodeExecuted": false,
+      "scope": "complete documentation archive"
+    },
+    {
+      "repo": "fluentform/fluentform",
+      "sha": "9809093dd2ac209cf2f632d882114d0e1257c10b",
+      "sourceInspectedOnly": true,
+      "vendorCodeExecuted": false,
+      "scope": "current HTTP routes/controllers/policies and MCP PHP source only"
+    }
+  ],
+  "sanitizedSnapshotSha256": "090fdbd0caaa32fb4dee6a3bd8b41f308248c723578aa13f2d6e99c76d3de38a",
+  "fullAPIClaim": false,
+  "bodySchemaCorrections": [
+    "Comment content uses comment and POST, with nonempty required content.",
+    "Contact update requires nonempty subscriber object; native docs also allow top-level provider fields but this companion exposes the documented nested form.",
+    "Input pagination locally bounded to100 records/10000 page; not a universal native cap.",
+    "fc_get_feed context comes from pinned vendor prose; Forms entries use sort_by direction, entry_type and GET /submissions; stats use start_date/end_date/metric, as proven by current native PHP services."
+  ],
+  "statefulGET": "ff_form_report requires confirmation because the current provider service may migrate report data."
+}

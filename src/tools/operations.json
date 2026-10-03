@@ -1,0 +1,3452 @@
+[
+  {
+    "name": "fcrm_dashboard_stats",
+    "operationId": "getDashboardStats",
+    "title": "fcrm dashboard stats",
+    "description": "Retrieve overall dashboard statistics including active contacts count, campaigns count, emails sent, active automations, onboarding progress, quick links, recent contacts, recent campaigns, active automations list, and system recommendations.\n\n\n\n**Required capability:** `fcrm_view_dashboard`\n\n_Enforced by `ReportPolicy::verifyRequest()`, the policy default for this route group._",
+    "method": "GET",
+    "path": "/fluent-crm/v2/reports/dashboard-stats",
+    "group": "crm_reports",
+    "risk": "read",
+    "params": [],
+    "bodySchema": null,
+    "bodyRequired": false,
+    "privateOutput": false,
+    "source": {
+      "repo": "fluentcrm/fluent-crm-developers-docs",
+      "relativeFile": "reports/get-dashboard-stats.json",
+      "sha256": "cde7d3a9452606b793c700593e24f8982708e9a3f16e2833dce764c35285cb9f",
+      "documentationUrl": "https://developers.fluentcrm.com/rest-api/operations/reports/get-dashboard-stats"
+    }
+  },
+  {
+    "name": "fcrm_list_contacts",
+    "operationId": "listContacts",
+    "title": "fcrm list contacts",
+    "description": "Retrieve a paginated list of contacts. Supports both simple filtering (by tags, lists, statuses) and advanced filtering with complex filter groups. Optionally includes custom field values.\n\n\n\n**Required capability:** `fcrm_read_contacts` or `fcrm_manage_contacts` : which one applies depends on the action being performed.\n\n_Enforced by `SubscriberPolicy::verifyRequest()`, the policy default for this route group._",
+    "method": "GET",
+    "path": "/fluent-crm/v2/subscribers",
+    "group": "crm_contacts",
+    "risk": "read",
+    "params": [
+      {
+        "name": "filter_type",
+        "key": "filter_type",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "default": "simple",
+          "enum": [
+            "simple",
+            "advanced"
+          ],
+          "description": "Type of filtering to apply."
+        },
+        "style": "form",
+        "explode": true
+      },
+      {
+        "name": "search",
+        "key": "search",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "description": "Search contacts by name, email, or other searchable fields."
+        },
+        "style": "form",
+        "explode": true
+      },
+      {
+        "name": "sort_by",
+        "key": "sort_by",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "default": "id",
+          "description": "Column to sort by."
+        },
+        "style": "form",
+        "explode": true
+      },
+      {
+        "name": "sort_type",
+        "key": "sort_type",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "default": "DESC",
+          "enum": [
+            "ASC",
+            "DESC"
+          ],
+          "description": "Sort direction."
+        },
+        "style": "form",
+        "explode": true
+      },
+      {
+        "name": "has_commerce",
+        "key": "has_commerce",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "description": "Filter by commerce integration availability."
+        },
+        "style": "form",
+        "explode": true
+      },
+      {
+        "name": "custom_fields",
+        "key": "custom_fields",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "description": "Set to `true` to include custom field values in the response."
+        },
+        "style": "form",
+        "explode": true
+      },
+      {
+        "name": "tags[]",
+        "key": "tags",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "integer"
+          },
+          "description": "Filter by tag IDs (simple filter mode only)."
+        },
+        "style": "form",
+        "explode": true
+      },
+      {
+        "name": "statuses[]",
+        "key": "statuses",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "subscribed",
+              "pending",
+              "unsubscribed",
+              "bounced",
+              "complained"
+            ]
+          },
+          "description": "Filter by contact statuses (simple filter mode only)."
+        },
+        "style": "form",
+        "explode": true
+      },
+      {
+        "name": "sms_statuses[]",
+        "key": "sms_statuses",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "sms_subscribed",
+              "sms_unsubscribed",
+              "sms_pending",
+              "sms_bounced"
+            ]
+          },
+          "description": "Filter by SMS statuses (simple filter mode only)."
+        },
+        "style": "form",
+        "explode": true
+      },
+      {
+        "name": "lists[]",
+        "key": "lists",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "integer"
+          },
+          "description": "Filter by list IDs (simple filter mode only)."
+        },
+        "style": "form",
+        "explode": true
+      },
+      {
+        "name": "company_ids[]",
+        "key": "company_ids",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "integer"
+          },
+          "description": "Filter by company IDs."
+        },
+        "style": "form",
+        "explode": true
+      },
+      {
+        "name": "advanced_filters",
+        "key": "advanced_filters",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "description": "JSON-encoded advanced filter groups (advanced filter mode only)."
+        },
+        "style": "form",
+        "explode": true
+      },
+      {
+        "name": "per_page",
+        "key": "per_page",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "integer",
+          "default": 15,
+          "description": "Number of contacts per page.",
+          "minimum": 1,
+          "maximum": 100
+        },
+        "style": "form",
+        "explode": true
+      },
+      {
+        "name": "page",
+        "key": "page",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "integer",
+          "default": 1,
+          "description": "Page number for pagination.",
+          "minimum": 1,
+          "maximum": 10000
+        },
+        "style": "form",
+        "explode": true
+      }
+    ],
+    "bodySchema": null,
+    "bodyRequired": false,
+    "privateOutput": false,
+    "source": {
+      "repo": "fluentcrm/fluent-crm-developers-docs",
+      "relativeFile": "contacts/list-contacts.json",
+      "sha256": "0a4a41f04ec0c6596ec7f072cc4d624172d526f255f0aa8a6360702662f69e9b",
+      "documentationUrl": "https://developers.fluentcrm.com/rest-api/operations/contacts/list-contacts"
+    }
+  },
+  {
+    "name": "fcrm_get_contact",
+    "operationId": "getContact",
+    "title": "fcrm get contact",
+    "description": "Retrieve a single contact by ID or email. Supports eager-loading related data like stats, custom values, custom field definitions, and commerce stats via the `with[]` parameter.\n\n\n\n**Required capability:** `fcrm_read_contacts` or `fcrm_manage_contacts` : which one applies depends on the action being performed.\n\n_Enforced by `SubscriberPolicy::verifyRequest()`, the policy default for this route group._",
+    "method": "GET",
+    "path": "/fluent-crm/v2/subscribers/{id}",
+    "group": "crm_contacts",
+    "risk": "read",
+    "params": [
+      {
+        "name": "id",
+        "key": "id",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "integer",
+          "description": "The contact ID.",
+          "minimum": 1
+        },
+        "style": "form",
+        "explode": true
+      },
+      {
+        "name": "get_by_email",
+        "key": "get_by_email",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "format": "email",
+          "description": "If set, looks up the contact by email address instead of the path `id`."
+        },
+        "style": "form",
+        "explode": true
+      },
+      {
+        "name": "with[]",
+        "key": "with",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "stats",
+              "subscriber.custom_values",
+              "custom_fields",
+              "commerce_stat"
+            ]
+          },
+          "description": "Relationships and extra data to include. Supported values: `stats`, `subscriber.custom_values`, `custom_fields`, `commerce_stat`."
+        },
+        "style": "form",
+        "explode": true
+      }
+    ],
+    "bodySchema": null,
+    "bodyRequired": false,
+    "privateOutput": false,
+    "source": {
+      "repo": "fluentcrm/fluent-crm-developers-docs",
+      "relativeFile": "contacts/get-contact.json",
+      "sha256": "665db185498a33908e87ba8fb21a0ad348d4a75781b5e5be83f2ea8e6fd8ab76",
+      "documentationUrl": "https://developers.fluentcrm.com/rest-api/operations/contacts/get-contact"
+    }
+  },
+  {
+    "name": "fcrm_search_contacts",
+    "operationId": "searchContacts",
+    "title": "fcrm search contacts",
+    "description": "Search contacts by name or email. Returns a lightweight object of contacts keyed by ID, suitable for dropdowns and autocomplete widgets. Optionally loads default contacts when no search term is provided.\n\n\n\n**Required capability:** `fcrm_read_contacts` or `fcrm_manage_contacts` : which one applies depends on the action being performed.\n\n_Enforced by `SubscriberPolicy::verifyRequest()`, the policy default for this route group._",
+    "method": "GET",
+    "path": "/fluent-crm/v2/subscribers/search-contacts",
+    "group": "crm_contacts",
+    "risk": "read",
+    "params": [
+      {
+        "name": "search",
+        "key": "search",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "description": "Search term to match against contact name and email."
+        },
+        "style": "form",
+        "explode": true
+      },
+      {
+        "name": "limit",
+        "key": "limit",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "integer",
+          "default": 20,
+          "description": "Maximum number of results to return.",
+          "minimum": 1,
+          "maximum": 100
+        },
+        "style": "form",
+        "explode": true
+      },
+      {
+        "name": "load_default",
+        "key": "load_default",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "enum": [
+            "true",
+            "false",
+            "1",
+            "0",
+            "yes"
+          ],
+          "description": "If truthy and no search term is provided, returns the most recent contacts."
+        },
+        "style": "form",
+        "explode": true
+      },
+      {
+        "name": "values[]",
+        "key": "values",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "integer"
+          },
+          "description": "Array of contact IDs to always include in results (useful for pre-selected values)."
+        },
+        "style": "form",
+        "explode": true
+      },
+      {
+        "name": "offset",
+        "key": "offset",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "integer",
+          "default": 0,
+          "description": "Rows to skip before the first result. Combine with `limit` to page through matches."
+        },
+        "style": "form",
+        "explode": true
+      }
+    ],
+    "bodySchema": null,
+    "bodyRequired": false,
+    "privateOutput": false,
+    "source": {
+      "repo": "fluentcrm/fluent-crm-developers-docs",
+      "relativeFile": "contacts/search-contacts.json",
+      "sha256": "b800db7f36bc3e61ed28a4d1ec82b67f9954c343a56ce951e822d08ee4bd27df",
+      "documentationUrl": "https://developers.fluentcrm.com/rest-api/operations/contacts/search-contacts"
+    }
+  },
+  {
+    "name": "fcrm_create_contact",
+    "operationId": "createContact",
+    "title": "fcrm create contact",
+    "description": "Create a new contact. If `__force_update` is set to `yes`, it will update an existing contact with the same email instead of returning an error. Optionally sends a double opt-in email.\n\n\n\n**Required capability:** `fcrm_read_contacts` or `fcrm_manage_contacts` : which one applies depends on the action being performed.\n\n_Enforced by `SubscriberPolicy::verifyRequest()`, the policy default for this route group._ Explicit local confirmation is required; hooks, announcements and automations may affect other people. No retries.",
+    "method": "POST",
+    "path": "/fluent-crm/v2/subscribers",
+    "group": "crm_contacts",
+    "risk": "destructive",
+    "params": [],
+    "bodySchema": {
+      "type": "object",
+      "required": [
+        "email",
+        "status"
+      ],
+      "properties": {
+        "email": {
+          "type": "string",
+          "format": "email",
+          "description": "Contact email address. Must be unique unless `__force_update` is `yes`."
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "subscribed",
+            "pending",
+            "unsubscribed",
+            "bounced",
+            "complained"
+          ],
+          "description": "Contact subscription status."
+        },
+        "first_name": {
+          "type": "string",
+          "description": "First name."
+        },
+        "last_name": {
+          "type": "string",
+          "description": "Last name."
+        },
+        "prefix": {
+          "type": "string",
+          "description": "Name prefix (e.g., Mr, Mrs, Ms)."
+        },
+        "contact_type": {
+          "type": "string",
+          "enum": [
+            "lead",
+            "customer"
+          ],
+          "description": "Contact type."
+        },
+        "address_line_1": {
+          "type": "string",
+          "description": "Address line 1."
+        },
+        "address_line_2": {
+          "type": "string",
+          "description": "Address line 2."
+        },
+        "postal_code": {
+          "type": "string",
+          "description": "Postal/zip code."
+        },
+        "city": {
+          "type": "string",
+          "description": "City."
+        },
+        "state": {
+          "type": "string",
+          "description": "State or province."
+        },
+        "country": {
+          "type": "string",
+          "description": "Two-letter country code."
+        },
+        "phone": {
+          "type": "string",
+          "description": "Phone number."
+        },
+        "timezone": {
+          "type": "string",
+          "description": "Timezone identifier."
+        },
+        "date_of_birth": {
+          "type": "string",
+          "description": "Date of birth (YYYY-MM-DD)."
+        },
+        "source": {
+          "type": "string",
+          "description": "Contact source."
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "integer"
+          },
+          "description": "Tag IDs to assign."
+        },
+        "lists": {
+          "type": "array",
+          "items": {
+            "type": "integer"
+          },
+          "description": "List IDs to assign."
+        },
+        "double_optin": {
+          "type": "boolean",
+          "description": "Send double opt-in confirmation email."
+        },
+        "__force_update": {
+          "type": "string",
+          "enum": [
+            "yes",
+            "no"
+          ],
+          "description": "If `yes`, updates existing contact with the same email instead of failing."
+        }
+      },
+      "additionalProperties": false
+    },
+    "bodyRequired": true,
+    "privateOutput": false,
+    "source": {
+      "repo": "fluentcrm/fluent-crm-developers-docs",
+      "relativeFile": "contacts/create-contact.json",
+      "sha256": "a9abbd7527460504b7a551d40fe3f3b728b7b655dead9e5e3bd41fba4808b8f4",
+      "documentationUrl": "https://developers.fluentcrm.com/rest-api/operations/contacts/create-contact"
+    }
+  },
+  {
+    "name": "fcrm_update_contact",
+    "operationId": "updateContact",
+    "title": "fcrm update contact",
+    "description": "Update an existing contact's fields, custom values, tags, and lists. Supports attaching and detaching tags/lists in a single request. The `subscriber` object or individual fields can be passed in the request body.\n\n\n\n**Required capability:** `fcrm_read_contacts` or `fcrm_manage_contacts` : which one applies depends on the action being performed.\n\n_Enforced by `SubscriberPolicy::verifyRequest()`, the policy default for this route group._ Explicit local confirmation is required; hooks, announcements and automations may affect other people. No retries.",
+    "method": "PUT",
+    "path": "/fluent-crm/v2/subscribers/{id}",
+    "group": "crm_contacts",
+    "risk": "destructive",
+    "params": [
+      {
+        "name": "id",
+        "key": "id",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "integer",
+          "description": "The contact ID.",
+          "minimum": 1
+        },
+        "style": "form",
+        "explode": true
+      }
+    ],
+    "bodySchema": {
+      "type": "object",
+      "properties": {
+        "subscriber": {
+          "type": "object",
+          "description": "Contact data can be nested inside a `subscriber` object or passed at the top level.",
+          "properties": {
+            "email": {
+              "type": "string",
+              "format": "email",
+              "description": "Email address (must be unique)."
+            },
+            "first_name": {
+              "type": "string"
+            },
+            "last_name": {
+              "type": "string"
+            },
+            "prefix": {
+              "type": "string"
+            },
+            "status": {
+              "type": "string",
+              "enum": [
+                "subscribed",
+                "pending",
+                "unsubscribed",
+                "bounced",
+                "complained"
+              ]
+            },
+            "contact_type": {
+              "type": "string",
+              "enum": [
+                "lead",
+                "customer"
+              ]
+            },
+            "address_line_1": {
+              "type": "string"
+            },
+            "address_line_2": {
+              "type": "string"
+            },
+            "postal_code": {
+              "type": "string"
+            },
+            "city": {
+              "type": "string"
+            },
+            "state": {
+              "type": "string"
+            },
+            "country": {
+              "type": "string"
+            },
+            "phone": {
+              "type": "string"
+            },
+            "timezone": {
+              "type": "string"
+            },
+            "date_of_birth": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Date of birth (YYYY-MM-DD). Send null or empty string to clear."
+            },
+            "source": {
+              "type": "string"
+            },
+            "custom_values": {
+              "type": "object",
+              "description": "Custom field key-value pairs to update.",
+              "additionalProperties": {
+                "type": "string"
+              }
+            },
+            "attach_tags": {
+              "type": "array",
+              "items": {
+                "type": "integer"
+              },
+              "description": "Tag IDs to attach."
+            },
+            "detach_tags": {
+              "type": "array",
+              "items": {
+                "type": "integer"
+              },
+              "description": "Tag IDs to detach."
+            },
+            "attach_lists": {
+              "type": "array",
+              "items": {
+                "type": "integer"
+              },
+              "description": "List IDs to attach."
+            },
+            "detach_lists": {
+              "type": "array",
+              "items": {
+                "type": "integer"
+              },
+              "description": "List IDs to detach."
+            }
+          },
+          "minProperties": 1,
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "subscriber"
+      ],
+      "additionalProperties": false
+    },
+    "bodyRequired": true,
+    "privateOutput": false,
+    "source": {
+      "repo": "fluentcrm/fluent-crm-developers-docs",
+      "relativeFile": "contacts/update-contact.json",
+      "sha256": "0ba726cb9cbedf96385b32ed45cf95027c50a60c6a05e4708cfefbaf431aedb6",
+      "documentationUrl": "https://developers.fluentcrm.com/rest-api/operations/contacts/update-contact"
+    }
+  },
+  {
+    "name": "fcrm_contact_notes",
+    "operationId": "getContactNotes",
+    "title": "fcrm contact notes",
+    "description": "Retrieve a paginated list of notes for a contact. Supports searching notes by title. Each note includes the user who created it.\n\n\n\n**Required capability:** `fcrm_read_contacts` or `fcrm_manage_contacts` : which one applies depends on the action being performed.\n\n_Enforced by `SubscriberPolicy::verifyRequest()`, the policy default for this route group._",
+    "method": "GET",
+    "path": "/fluent-crm/v2/subscribers/{id}/notes",
+    "group": "crm_contacts",
+    "risk": "read",
+    "params": [
+      {
+        "name": "id",
+        "key": "id",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "integer",
+          "description": "The contact ID.",
+          "minimum": 1
+        },
+        "style": "form",
+        "explode": true
+      },
+      {
+        "name": "search",
+        "key": "search",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "description": "Search notes by title."
+        },
+        "style": "form",
+        "explode": true
+      },
+      {
+        "name": "per_page",
+        "key": "per_page",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "integer",
+          "default": 15,
+          "description": "Number of notes per page.",
+          "minimum": 1,
+          "maximum": 100
+        },
+        "style": "form",
+        "explode": true
+      },
+      {
+        "name": "page",
+        "key": "page",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "integer",
+          "default": 1,
+          "description": "Page number.",
+          "minimum": 1,
+          "maximum": 10000
+        },
+        "style": "form",
+        "explode": true
+      },
+      {
+        "name": "include_id",
+        "key": "include_id",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "integer",
+          "description": "Id of a note that must appear in the response even when it falls outside the current page. When it is not already on the page it is returned separately as `included_note`, scoped to this contact."
+        },
+        "style": "form",
+        "explode": true
+      }
+    ],
+    "bodySchema": null,
+    "bodyRequired": false,
+    "privateOutput": false,
+    "source": {
+      "repo": "fluentcrm/fluent-crm-developers-docs",
+      "relativeFile": "contacts/get-contact-notes.json",
+      "sha256": "e9c055a9fba4439e84af2a2d7e64ab48dc34a6096520c8deadf977f6cd0aae7e",
+      "documentationUrl": "https://developers.fluentcrm.com/rest-api/operations/contacts/get-contact-notes"
+    }
+  },
+  {
+    "name": "fcrm_add_contact_note",
+    "operationId": "createContactNote",
+    "title": "fcrm add contact note",
+    "description": "Add a new note to a contact. The note description supports SmartCode/merge tags which are parsed before saving. If `created_at` is not provided, it defaults to the current WordPress time.\n\n\n\n**Required capability:** `fcrm_read_contacts` or `fcrm_manage_contacts` : which one applies depends on the action being performed.\n\n_Enforced by `SubscriberPolicy::verifyRequest()`, the policy default for this route group._ Explicit local confirmation is required; hooks, announcements and automations may affect other people. No retries.",
+    "method": "POST",
+    "path": "/fluent-crm/v2/subscribers/{id}/notes",
+    "group": "crm_contacts",
+    "risk": "destructive",
+    "params": [
+      {
+        "name": "id",
+        "key": "id",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "integer",
+          "description": "The contact ID.",
+          "minimum": 1
+        },
+        "style": "form",
+        "explode": true
+      }
+    ],
+    "bodySchema": {
+      "type": "object",
+      "required": [
+        "note"
+      ],
+      "properties": {
+        "note": {
+          "type": "object",
+          "required": [
+            "title",
+            "description",
+            "type"
+          ],
+          "properties": {
+            "title": {
+              "type": "string",
+              "description": "Note title."
+            },
+            "description": {
+              "type": "string",
+              "description": "Note content (HTML). Supports SmartCode/merge tags."
+            },
+            "type": {
+              "type": "string",
+              "enum": [
+                "note",
+                "call",
+                "email",
+                "meeting",
+                "activity"
+              ],
+              "description": "Note type."
+            },
+            "created_at": {
+              "type": "string",
+              "format": "date-time",
+              "description": "Custom creation date. Defaults to current time if not provided."
+            }
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "bodyRequired": true,
+    "privateOutput": false,
+    "source": {
+      "repo": "fluentcrm/fluent-crm-developers-docs",
+      "relativeFile": "contacts/create-contact-note.json",
+      "sha256": "3009e192d6526e02964181e631406a7e4f7dc8bd576dfa485eeba9004cb11633",
+      "documentationUrl": "https://developers.fluentcrm.com/rest-api/operations/contacts/create-contact-note"
+    }
+  },
+  {
+    "name": "fcrm_list_tags",
+    "operationId": "listTags",
+    "title": "fcrm list tags",
+    "description": "Retrieve a paginated list of tags. Optionally includes subscriber counts and a separate array of all tags for dropdown/select usage.\n\n\n\n**Required capability:** `fcrm_manage_contact_cats`\n\n_Enforced by `TagPolicy::verifyRequest()`, the policy default for this route group._",
+    "method": "GET",
+    "path": "/fluent-crm/v2/tags",
+    "group": "crm_tags",
+    "risk": "read",
+    "params": [
+      {
+        "name": "search",
+        "key": "search",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "description": "Search tags by title, slug, or description."
+        },
+        "style": "form",
+        "explode": true
+      },
+      {
+        "name": "sort_by",
+        "key": "sort_by",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "default": "id",
+          "enum": [
+            "id",
+            "title",
+            "slug",
+            "created_at"
+          ],
+          "description": "Column to sort by."
+        },
+        "style": "form",
+        "explode": true
+      },
+      {
+        "name": "sort_order",
+        "key": "sort_order",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "default": "DESC",
+          "enum": [
+            "ASC",
+            "DESC"
+          ],
+          "description": "Sort direction."
+        },
+        "style": "form",
+        "explode": true
+      },
+      {
+        "name": "per_page",
+        "key": "per_page",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "integer",
+          "default": 15,
+          "description": "Number of tags per page.",
+          "minimum": 1,
+          "maximum": 100
+        },
+        "style": "form",
+        "explode": true
+      },
+      {
+        "name": "page",
+        "key": "page",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "integer",
+          "default": 1,
+          "description": "Page number for pagination.",
+          "minimum": 1,
+          "maximum": 10000
+        },
+        "style": "form",
+        "explode": true
+      },
+      {
+        "name": "exclude_counts",
+        "key": "exclude_counts",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "boolean",
+          "description": "If set to any truthy value, subscriber counts will not be included for each tag."
+        },
+        "style": "form",
+        "explode": true
+      },
+      {
+        "name": "all_tags",
+        "key": "all_tags",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "boolean",
+          "description": "If set to any truthy value, includes a flat `all_tags` array with id, title, and slug of every tag (useful for dropdowns)."
+        },
+        "style": "form",
+        "explode": true
+      }
+    ],
+    "bodySchema": null,
+    "bodyRequired": false,
+    "privateOutput": false,
+    "source": {
+      "repo": "fluentcrm/fluent-crm-developers-docs",
+      "relativeFile": "tags/list-tags.json",
+      "sha256": "87d2ebe5dfeac15470c62a14279a34a7fb065a04a399e4b38faf47931ff5e68c",
+      "documentationUrl": "https://developers.fluentcrm.com/rest-api/operations/tags/list-tags"
+    }
+  },
+  {
+    "name": "fcrm_list_lists",
+    "operationId": "listLists",
+    "title": "fcrm list lists",
+    "description": "Retrieve a paginated list of contact lists. Optionally includes subscriber counts and a separate array of all lists for dropdown/select usage.\n\n\n\n**Required capability:** `fcrm_manage_contact_cats`\n\n_Enforced by `ListPolicy::verifyRequest()`, the policy default for this route group._",
+    "method": "GET",
+    "path": "/fluent-crm/v2/lists",
+    "group": "crm_lists",
+    "risk": "read",
+    "params": [
+      {
+        "name": "search",
+        "key": "search",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "description": "Search lists by title, slug, or description."
+        },
+        "style": "form",
+        "explode": true
+      },
+      {
+        "name": "sort_by",
+        "key": "sort_by",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "default": "id",
+          "enum": [
+            "id",
+            "title",
+            "slug",
+            "created_at"
+          ],
+          "description": "Column to sort by."
+        },
+        "style": "form",
+        "explode": true
+      },
+      {
+        "name": "sort_order",
+        "key": "sort_order",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "default": "DESC",
+          "enum": [
+            "ASC",
+            "DESC"
+          ],
+          "description": "Sort direction."
+        },
+        "style": "form",
+        "explode": true
+      },
+      {
+        "name": "per_page",
+        "key": "per_page",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "integer",
+          "default": 15,
+          "description": "Number of lists per page.",
+          "minimum": 1,
+          "maximum": 100
+        },
+        "style": "form",
+        "explode": true
+      },
+      {
+        "name": "page",
+        "key": "page",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "integer",
+          "default": 1,
+          "description": "Page number for pagination.",
+          "minimum": 1,
+          "maximum": 10000
+        },
+        "style": "form",
+        "explode": true
+      },
+      {
+        "name": "exclude_counts",
+        "key": "exclude_counts",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "boolean",
+          "description": "If set to any truthy value, `totalCount` and `subscribersCount` will not be included for each list."
+        },
+        "style": "form",
+        "explode": true
+      },
+      {
+        "name": "all_lists",
+        "key": "all_lists",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "boolean",
+          "description": "If set to any truthy value, includes a flat `all_lists` array with id, title, and slug of every list (useful for dropdowns)."
+        },
+        "style": "form",
+        "explode": true
+      },
+      {
+        "name": "with[]",
+        "key": "with",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Extra data to include. `subscribersCount` adds per-list contact counts via one grouped pivot query."
+        },
+        "style": "form",
+        "explode": true
+      }
+    ],
+    "bodySchema": null,
+    "bodyRequired": false,
+    "privateOutput": false,
+    "source": {
+      "repo": "fluentcrm/fluent-crm-developers-docs",
+      "relativeFile": "lists/list-lists.json",
+      "sha256": "730c00a86af6e5070d38a935863aba37f042acd43243eb27deba3d14332e0206",
+      "documentationUrl": "https://developers.fluentcrm.com/rest-api/operations/lists/list-lists"
+    }
+  },
+  {
+    "name": "fcrm_list_campaigns",
+    "operationId": "listCampaigns",
+    "title": "fcrm list campaigns",
+    "description": "Retrieve a paginated list of email campaigns. Supports filtering by status, search term, labels, and sorting. Optionally includes campaign statistics.\n\n\n\n**Required capability:** `fcrm_read_emails` or `fcrm_manage_emails` : which one applies depends on the action being performed.\n\n_Enforced by `CampaignPolicy::verifyRequest()`, the policy default for this route group._",
+    "method": "GET",
+    "path": "/fluent-crm/v2/campaigns",
+    "group": "crm_campaigns",
+    "risk": "read",
+    "params": [
+      {
+        "name": "searchBy",
+        "key": "searchBy",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "description": "Search campaigns by title."
+        },
+        "style": "form",
+        "explode": true
+      },
+      {
+        "name": "statuses[]",
+        "key": "statuses",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "draft",
+              "processing",
+              "pending-scheduled",
+              "scheduled",
+              "working",
+              "paused",
+              "archived"
+            ]
+          },
+          "description": "Filter by campaign statuses."
+        },
+        "style": "form",
+        "explode": true
+      },
+      {
+        "name": "sort_by",
+        "key": "sort_by",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "default": "created_at",
+          "description": "Column to sort by."
+        },
+        "style": "form",
+        "explode": true
+      },
+      {
+        "name": "sort_type",
+        "key": "sort_type",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "default": "DESC",
+          "enum": [
+            "ASC",
+            "DESC"
+          ],
+          "description": "Sort direction."
+        },
+        "style": "form",
+        "explode": true
+      },
+      {
+        "name": "with[]",
+        "key": "with",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "stats"
+            ]
+          },
+          "description": "Include related data. Use `stats` to include campaign statistics and labels."
+        },
+        "style": "form",
+        "explode": true
+      },
+      {
+        "name": "labels[]",
+        "key": "labels",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "integer"
+          },
+          "description": "Filter by label IDs."
+        },
+        "style": "form",
+        "explode": true
+      },
+      {
+        "name": "per_page",
+        "key": "per_page",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "integer",
+          "default": 15,
+          "description": "Number of results per page.",
+          "minimum": 1,
+          "maximum": 100
+        },
+        "style": "form",
+        "explode": true
+      },
+      {
+        "name": "page",
+        "key": "page",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "integer",
+          "default": 1,
+          "description": "Page number.",
+          "minimum": 1,
+          "maximum": 10000
+        },
+        "style": "form",
+        "explode": true
+      }
+    ],
+    "bodySchema": null,
+    "bodyRequired": false,
+    "privateOutput": false,
+    "source": {
+      "repo": "fluentcrm/fluent-crm-developers-docs",
+      "relativeFile": "campaigns/list-campaigns.json",
+      "sha256": "47d7b6460e12bbedd96b267b91e89282a35924016e46f6eb83296e60e8b22e3f",
+      "documentationUrl": "https://developers.fluentcrm.com/rest-api/operations/campaigns/list-campaigns"
+    }
+  },
+  {
+    "name": "fcrm_get_campaign",
+    "operationId": "getCampaign",
+    "title": "fcrm get campaign",
+    "description": "Retrieve a single campaign by ID. Optionally include related data (template, subjects) via the `with` parameter. When `viewCampaign` is set, returns the campaign with its paginated emails. Also returns available email templates and the server's current time.\n\n\n\n**Required capability:** `fcrm_read_emails` or `fcrm_manage_emails` : which one applies depends on the action being performed.\n\n_Enforced by `CampaignPolicy::verifyRequest()`, the policy default for this route group._",
+    "method": "GET",
+    "path": "/fluent-crm/v2/campaigns/{id}",
+    "group": "crm_campaigns",
+    "risk": "read",
+    "params": [
+      {
+        "name": "id",
+        "key": "id",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "integer",
+          "description": "The campaign ID.",
+          "minimum": 1
+        },
+        "style": "form",
+        "explode": true
+      },
+      {
+        "name": "with[]",
+        "key": "with",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Include related data (e.g., `template`, `subjects`)."
+        },
+        "style": "form",
+        "explode": true
+      },
+      {
+        "name": "viewCampaign",
+        "key": "viewCampaign",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "description": "If set, returns the campaign with paginated emails instead of the standard response."
+        },
+        "style": "form",
+        "explode": true
+      }
+    ],
+    "bodySchema": null,
+    "bodyRequired": false,
+    "privateOutput": false,
+    "source": {
+      "repo": "fluentcrm/fluent-crm-developers-docs",
+      "relativeFile": "campaigns/get-campaign.json",
+      "sha256": "c11c3840fc13babbc78b90f999c2565eacafd040956a5fcfa90d21d8c6863cd2",
+      "documentationUrl": "https://developers.fluentcrm.com/rest-api/operations/campaigns/get-campaign"
+    }
+  },
+  {
+    "name": "fcrm_campaign_stats",
+    "operationId": "getCampaignOverviewStats",
+    "title": "fcrm campaign stats",
+    "description": "Get overview statistics for a campaign including sent count, email status breakdown, and open/click analytics. This is a lighter-weight alternative to the full campaign status endpoint, suitable for dashboard widgets or summary views.\n\n\n\n**Required capability:** `fcrm_read_emails` or `fcrm_manage_emails` : which one applies depends on the action being performed.\n\n_Enforced by `CampaignPolicy::verifyRequest()`, the policy default for this route group._",
+    "method": "GET",
+    "path": "/fluent-crm/v2/campaigns/{id}/overview_stats",
+    "group": "crm_campaigns",
+    "risk": "read",
+    "params": [
+      {
+        "name": "id",
+        "key": "id",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "integer",
+          "description": "The campaign ID.",
+          "minimum": 1
+        },
+        "style": "form",
+        "explode": true
+      }
+    ],
+    "bodySchema": null,
+    "bodyRequired": false,
+    "privateOutput": false,
+    "source": {
+      "repo": "fluentcrm/fluent-crm-developers-docs",
+      "relativeFile": "campaigns/get-campaign-overview-stats.json",
+      "sha256": "0cecdbf077a1724026a5b4ba3891dc56a13d5edc6ebeb130dc83302a765d0290",
+      "documentationUrl": "https://developers.fluentcrm.com/rest-api/operations/campaigns/get-campaign-overview-stats"
+    }
+  },
+  {
+    "name": "fcrm_list_sequences",
+    "operationId": "listSequences",
+    "title": "fcrm list sequences",
+    "description": "Retrieve a paginated list of email sequences. Optionally include statistics (email count, subscriber count, revenue) for each sequence. Requires FluentCampaign Pro.\n\n\n\n**Required capability:** `fcrm_read_emails` or `fcrm_manage_emails` : which one applies depends on the action being performed.\n\n_Enforced by `SequencePolicy::verifyRequest()`, the policy default for this route group._\n\n**Requires:** FluentCampaign Pro. Without it the route does not exist.",
+    "method": "GET",
+    "path": "/fluent-crm/v2/sequences",
+    "group": "crm_sequences",
+    "risk": "read",
+    "params": [
+      {
+        "name": "order",
+        "key": "order",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "default": "desc",
+          "enum": [
+            "asc",
+            "desc"
+          ],
+          "description": "Sort direction."
+        },
+        "style": "form",
+        "explode": true
+      },
+      {
+        "name": "orderBy",
+        "key": "orderBy",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "default": "id",
+          "description": "Column to sort by."
+        },
+        "style": "form",
+        "explode": true
+      },
+      {
+        "name": "search",
+        "key": "search",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "description": "Search sequences by title."
+        },
+        "style": "form",
+        "explode": true
+      },
+      {
+        "name": "with[]",
+        "key": "with",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "stats"
+            ]
+          },
+          "description": "Include additional data. Use `stats` to include email count, subscriber count, and revenue for each sequence."
+        },
+        "style": "form",
+        "explode": true
+      },
+      {
+        "name": "per_page",
+        "key": "per_page",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "integer",
+          "default": 15,
+          "description": "Number of sequences per page.",
+          "minimum": 1,
+          "maximum": 100
+        },
+        "style": "form",
+        "explode": true
+      },
+      {
+        "name": "page",
+        "key": "page",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "integer",
+          "default": 1,
+          "description": "Page number for pagination.",
+          "minimum": 1,
+          "maximum": 10000
+        },
+        "style": "form",
+        "explode": true
+      }
+    ],
+    "bodySchema": null,
+    "bodyRequired": false,
+    "privateOutput": false,
+    "source": {
+      "repo": "fluentcrm/fluent-crm-developers-docs",
+      "relativeFile": "sequences/list-sequences.json",
+      "sha256": "20cb0dd9326420f617de67ce73b8dbb181e5c0b6a210ae89eea41bae54b75015",
+      "documentationUrl": "https://developers.fluentcrm.com/rest-api/operations/sequences/list-sequences"
+    }
+  },
+  {
+    "name": "fcrm_list_automations",
+    "operationId": "listFunnels",
+    "title": "fcrm list automations",
+    "description": "Retrieve a paginated list of automation funnels. Supports sorting, searching by title, and filtering by label IDs. Optionally includes trigger definitions.\n\n\n\n**Required capability:** `fcrm_read_funnels` or `fcrm_write_funnels` : which one applies depends on the action being performed.\n\n_Enforced by `FunnelPolicy::verifyRequest()`, the policy default for this route group._",
+    "method": "GET",
+    "path": "/fluent-crm/v2/funnels",
+    "group": "crm_funnels",
+    "risk": "read",
+    "params": [
+      {
+        "name": "sort_by",
+        "key": "sort_by",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "default": "id",
+          "description": "Column to sort by."
+        },
+        "style": "form",
+        "explode": true
+      },
+      {
+        "name": "sort_type",
+        "key": "sort_type",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "default": "DESC",
+          "enum": [
+            "ASC",
+            "DESC"
+          ],
+          "description": "Sort direction."
+        },
+        "style": "form",
+        "explode": true
+      },
+      {
+        "name": "search",
+        "key": "search",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "description": "Search funnels by title (partial match)."
+        },
+        "style": "form",
+        "explode": true
+      },
+      {
+        "name": "labels[]",
+        "key": "labels",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "integer"
+          },
+          "description": "Filter funnels by label IDs."
+        },
+        "style": "form",
+        "explode": true
+      },
+      {
+        "name": "with[]",
+        "key": "with",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "triggers"
+            ]
+          },
+          "description": "Include additional related data. Supported values: `triggers`."
+        },
+        "style": "form",
+        "explode": true
+      },
+      {
+        "name": "per_page",
+        "key": "per_page",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "integer",
+          "default": 15,
+          "description": "Number of funnels per page.",
+          "minimum": 1,
+          "maximum": 100
+        },
+        "style": "form",
+        "explode": true
+      },
+      {
+        "name": "page",
+        "key": "page",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "integer",
+          "default": 1,
+          "description": "Page number for pagination.",
+          "minimum": 1,
+          "maximum": 10000
+        },
+        "style": "form",
+        "explode": true
+      },
+      {
+        "name": "tags[]",
+        "key": "tags",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "integer"
+          },
+          "description": "Only automations whose contacts carry these tag ids."
+        },
+        "style": "form",
+        "explode": true
+      },
+      {
+        "name": "lists[]",
+        "key": "lists",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "integer"
+          },
+          "description": "Only automations whose contacts are on these list ids."
+        },
+        "style": "form",
+        "explode": true
+      },
+      {
+        "name": "statuses[]",
+        "key": "statuses",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Filter automations by status, e.g. `published` or `draft`."
+        },
+        "style": "form",
+        "explode": true
+      }
+    ],
+    "bodySchema": null,
+    "bodyRequired": false,
+    "privateOutput": false,
+    "source": {
+      "repo": "fluentcrm/fluent-crm-developers-docs",
+      "relativeFile": "funnels/list-funnels.json",
+      "sha256": "d07a30ca1d17b3141f5044bd05cc7acff38c7dd719e856fb0f54f208915dab3e",
+      "documentationUrl": "https://developers.fluentcrm.com/rest-api/operations/funnels/list-funnels"
+    }
+  },
+  {
+    "name": "fcrm_automation_report",
+    "operationId": "getFunnelReport",
+    "title": "fcrm automation report",
+    "description": "Retrieve statistical reporting data for a specific automation funnel. Returns aggregated stats generated by the Reporting service.\n\n\n\n**Required capability:** `fcrm_read_funnels` or `fcrm_write_funnels` : which one applies depends on the action being performed.\n\n_Enforced by `FunnelPolicy::verifyRequest()`, the policy default for this route group._",
+    "method": "GET",
+    "path": "/fluent-crm/v2/funnels/{id}/report",
+    "group": "crm_funnels",
+    "risk": "read",
+    "params": [
+      {
+        "name": "id",
+        "key": "id",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "integer",
+          "description": "The funnel ID.",
+          "minimum": 1
+        },
+        "style": "form",
+        "explode": true
+      }
+    ],
+    "bodySchema": null,
+    "bodyRequired": false,
+    "privateOutput": false,
+    "source": {
+      "repo": "fluentcrm/fluent-crm-developers-docs",
+      "relativeFile": "funnels/get-funnel-report.json",
+      "sha256": "c2e52834226ed96ff7a6b4503cfd3d6790a9831a3fe9b7f6eaab6c8cc21f27c2",
+      "documentationUrl": "https://developers.fluentcrm.com/rest-api/operations/funnels/get-funnel-report"
+    }
+  },
+  {
+    "name": "fcrm_contact_emails",
+    "operationId": "getContactEmails",
+    "title": "fcrm contact emails",
+    "description": "Retrieve a paginated list of emails sent to a contact. Supports filtering by open/click status. Can also show FluentSMTP logs when the `tab` parameter is set to `fluentsmtp`.\n\n\n\n**Required capability:** `fcrm_read_contacts` or `fcrm_manage_contacts` : which one applies depends on the action being performed.\n\n_Enforced by `SubscriberPolicy::verifyRequest()`, the policy default for this route group._",
+    "method": "GET",
+    "path": "/fluent-crm/v2/subscribers/{id}/emails",
+    "group": "crm_contacts",
+    "risk": "read",
+    "params": [
+      {
+        "name": "id",
+        "key": "id",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "integer",
+          "description": "The contact ID.",
+          "minimum": 1
+        },
+        "style": "form",
+        "explode": true
+      },
+      {
+        "name": "filter",
+        "key": "filter",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "enum": [
+            "open",
+            "click",
+            "unopened"
+          ],
+          "description": "Filter emails by engagement status."
+        },
+        "style": "form",
+        "explode": true
+      },
+      {
+        "name": "tab",
+        "key": "tab",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "default": "crm",
+          "enum": [
+            "crm",
+            "fluentsmtp"
+          ],
+          "description": "Email source tab. Use `fluentsmtp` to show FluentSMTP logs instead of CRM campaign emails."
+        },
+        "style": "form",
+        "explode": true
+      },
+      {
+        "name": "per_page",
+        "key": "per_page",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "integer",
+          "default": 15,
+          "description": "Number of emails per page.",
+          "minimum": 1,
+          "maximum": 100
+        },
+        "style": "form",
+        "explode": true
+      },
+      {
+        "name": "page",
+        "key": "page",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "integer",
+          "default": 1,
+          "description": "Page number.",
+          "minimum": 1,
+          "maximum": 10000
+        },
+        "style": "form",
+        "explode": true
+      }
+    ],
+    "bodySchema": null,
+    "bodyRequired": false,
+    "privateOutput": false,
+    "source": {
+      "repo": "fluentcrm/fluent-crm-developers-docs",
+      "relativeFile": "contacts/get-contact-emails.json",
+      "sha256": "6c1ed3a8c3aa8a4eee1afc11bc8efd0a1e01685be15c1b23a274319522e4a75d",
+      "documentationUrl": "https://developers.fluentcrm.com/rest-api/operations/contacts/get-contact-emails"
+    }
+  },
+  {
+    "name": "fc_list_spaces",
+    "operationId": "listAllSpaces",
+    "title": "fc list spaces",
+    "description": "Returns the paginated list of spaces with each one formatted for display, including the current user permissions and membership within it.\n\nController: `SpaceController@getAllSpaces`\nRoute source: `fluent-community/app/Http/Routes/api.php:34`",
+    "method": "GET",
+    "path": "/fluent-community/v2/spaces/all-spaces",
+    "group": "community_spaces",
+    "risk": "read",
+    "params": [],
+    "bodySchema": null,
+    "bodyRequired": false,
+    "privateOutput": false,
+    "source": {
+      "repo": "WPManageNinja/fluent-community-developer-docs",
+      "relativeFile": "spaces/list-all-spaces.json",
+      "sha256": "9bb4d4992e4b9773c2895366f19ff257ccc2e54e646b1841c39e51b1c4a595c1",
+      "documentationUrl": "https://dev.fluentcommunity.co/restapi/operations/spaces/list-all-spaces"
+    }
+  },
+  {
+    "name": "fc_get_space",
+    "operationId": "getSpaceBySlug",
+    "title": "fc get space",
+    "description": "Returns one space with its settings, topics, the current user membership and the permissions they hold inside it.\n\nController: `SpaceController@getBySlug`\nRoute source: `fluent-community/app/Http/Routes/api.php:10`",
+    "method": "GET",
+    "path": "/fluent-community/v2/spaces/{spaceSlug}/by-slug",
+    "group": "community_spaces",
+    "risk": "read",
+    "params": [
+      {
+        "name": "spaceSlug",
+        "key": "slug",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "description": "SpaceSlug extracted from the URL path.",
+          "minLength": 1,
+          "pattern": "^(?!\\.{1,2}$)[^/\\\\\\x00-\\x1f?#]+$"
+        },
+        "style": "form",
+        "explode": true
+      }
+    ],
+    "bodySchema": null,
+    "bodyRequired": false,
+    "privateOutput": false,
+    "source": {
+      "repo": "WPManageNinja/fluent-community-developer-docs",
+      "relativeFile": "spaces/get-space-by-slug.json",
+      "sha256": "5aabab6735a9d4a24bf757f326bb280ea5bfb73c48c8ab25c1fc26cc69720ae2",
+      "documentationUrl": "https://dev.fluentcommunity.co/restapi/operations/spaces/get-space-by-slug"
+    }
+  },
+  {
+    "name": "fc_list_feeds",
+    "operationId": "listFeeds",
+    "title": "fc list feeds",
+    "description": "Returns a page of posts the current user is allowed to read, transformed for display, with the pinned post of a space returned separately on the first page.\n\nController: `FeedsController@get`\nRoute source: `fluent-community/app/Http/Routes/api.php:45`",
+    "method": "GET",
+    "path": "/fluent-community/v2/feeds",
+    "group": "community_feeds",
+    "risk": "read",
+    "params": [
+      {
+        "name": "space",
+        "key": "space",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "description": "Space read via `$request->get()` in get()."
+        },
+        "style": "form",
+        "explode": true
+      },
+      {
+        "name": "user_id",
+        "key": "user_id",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "description": "User ID read via `$request->getSafe()` in get()."
+        },
+        "style": "form",
+        "explode": true
+      },
+      {
+        "name": "topic_slug",
+        "key": "topic_slug",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "description": "Topic Slug read via `$request->getSafe()` in get()."
+        },
+        "style": "form",
+        "explode": true
+      },
+      {
+        "name": "search",
+        "key": "search",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "description": "Search read via `$request->getSafe()` in get()."
+        },
+        "style": "form",
+        "explode": true
+      },
+      {
+        "name": "status",
+        "key": "status",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "description": "Status read via `$request->getSafe()` in get()."
+        },
+        "style": "form",
+        "explode": true
+      },
+      {
+        "name": "per_page",
+        "key": "per_page",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "integer",
+          "default": 10,
+          "description": "Per Page read via `$request->get()` in get().",
+          "minimum": 1,
+          "maximum": 100
+        },
+        "style": "form",
+        "explode": true
+      },
+      {
+        "name": "page",
+        "key": "page",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "integer",
+          "default": 1,
+          "description": "Page read via `$request->get()` in get().",
+          "minimum": 1,
+          "maximum": 10000
+        },
+        "style": "form",
+        "explode": true
+      },
+      {
+        "name": "search_in",
+        "key": "search_in",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "array",
+          "default": [
+            "post_content"
+          ],
+          "description": "Search In read via `$request->get()` in get()."
+        },
+        "style": "form",
+        "explode": true
+      },
+      {
+        "name": "order_by_type",
+        "key": "order_by_type",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "description": "Order By Type read via `$request->getSafe()` in get()."
+        },
+        "style": "form",
+        "explode": true
+      },
+      {
+        "name": "disable_sticky",
+        "key": "disable_sticky",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "description": "Disable Sticky read via `$request->get()` in get()."
+        },
+        "style": "form",
+        "explode": true
+      }
+    ],
+    "bodySchema": null,
+    "bodyRequired": false,
+    "privateOutput": false,
+    "source": {
+      "repo": "WPManageNinja/fluent-community-developer-docs",
+      "relativeFile": "feeds/list-feeds.json",
+      "sha256": "a2b9eeb0236a0929d1c07d6e94efb5ca810723eb3292be2bc5fcf9ba4c3bf052",
+      "documentationUrl": "https://dev.fluentcommunity.co/restapi/operations/feeds/list-feeds"
+    }
+  },
+  {
+    "name": "fc_get_feed",
+    "operationId": "getFeedById",
+    "title": "fc get feed",
+    "description": "Returns a single post by numeric id; the id is resolved to a slug and then handled exactly as the by-slug endpoint.\n\nController: `FeedsController@getFeedById`\nRoute source: `fluent-community/app/Http/Routes/api.php:53`",
+    "method": "GET",
+    "path": "/fluent-community/v2/feeds/{feed_id}/by-id",
+    "group": "community_feeds",
+    "risk": "read",
+    "params": [
+      {
+        "name": "feed_id",
+        "key": "feed_id",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "integer",
+          "description": "Feed ID extracted from the URL path.",
+          "minimum": 1
+        },
+        "style": "form",
+        "explode": true
+      },
+      {
+        "name": "context",
+        "key": "context",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "enum": [
+            "view",
+            "edit"
+          ],
+          "description": "Prose-documented delegated edit context, requiring native post edit access."
+        },
+        "style": "form",
+        "explode": true
+      }
+    ],
+    "bodySchema": null,
+    "bodyRequired": false,
+    "privateOutput": false,
+    "source": {
+      "repo": "WPManageNinja/fluent-community-developer-docs",
+      "relativeFile": "feeds/get-feed-by-id.json",
+      "sha256": "38d2c5319f75656a1f55e4fc9ea1e94a7c72d4570929b47e221d6424e55fc1ac",
+      "documentationUrl": "https://dev.fluentcommunity.co/restapi/operations/feeds/get-feed-by-id",
+      "schemaCorrection": "Context argument documented by pinned vendor get-feed-by-id.md and delegated get-feed-by-slug.md; absent from generated operation JSON."
+    }
+  },
+  {
+    "name": "fc_create_feed",
+    "operationId": "createFeed",
+    "title": "fc create feed",
+    "description": "Creates a post, renders its Markdown, attaches media and topics, and returns the transformed post ready to prepend to the feed.\n\nController: `FeedsController@store`\nRoute source: `fluent-community/app/Http/Routes/api.php:46` Explicit local confirmation is required; hooks, announcements and automations may affect other people. No retries.",
+    "method": "POST",
+    "path": "/fluent-community/v2/feeds",
+    "group": "community_feeds",
+    "risk": "destructive",
+    "params": [],
+    "bodySchema": {
+      "type": "object",
+      "properties": {
+        "space": {
+          "type": "string"
+        },
+        "topic_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "send_announcement_email": {
+          "type": "string"
+        },
+        "content_type": {
+          "type": "string"
+        },
+        "message": {
+          "type": "string",
+          "minLength": 1
+        },
+        "survey": {
+          "type": "object",
+          "properties": {
+            "options": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "end_date": {
+              "type": "string"
+            },
+            "type": {
+              "type": "string"
+            }
+          },
+          "required": []
+        },
+        "title": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "message"
+      ],
+      "additionalProperties": false
+    },
+    "bodyRequired": true,
+    "privateOutput": false,
+    "source": {
+      "repo": "WPManageNinja/fluent-community-developer-docs",
+      "relativeFile": "feeds/create-feed.json",
+      "sha256": "d255a41b49fe0b9be5f9134ff3940d9e950fba443fb56b1b69e883ce0cfe6a38",
+      "documentationUrl": "https://dev.fluentcommunity.co/restapi/operations/feeds/create-feed"
+    }
+  },
+  {
+    "name": "fc_update_feed",
+    "operationId": "updateFeed",
+    "title": "fc update feed",
+    "description": "Replaces the body and metadata of an existing post, re-renders it, reconciles its media and topics, and records an edit history entry.\n\nController: `FeedsController@update`\nRoute source: `fluent-community/app/Http/Routes/api.php:47` Explicit local confirmation is required; hooks, announcements and automations may affect other people. No retries.",
+    "method": "POST",
+    "path": "/fluent-community/v2/feeds/{feed_id}",
+    "group": "community_feeds",
+    "risk": "destructive",
+    "params": [
+      {
+        "name": "feed_id",
+        "key": "feed_id",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "integer",
+          "description": "Feed ID extracted from the URL path.",
+          "minimum": 1
+        },
+        "style": "form",
+        "explode": true
+      }
+    ],
+    "bodySchema": {
+      "type": "object",
+      "properties": {
+        "new_space_id": {
+          "type": "string"
+        },
+        "move_to_profile": {
+          "type": "string"
+        },
+        "survey": {
+          "type": "object",
+          "properties": {
+            "options": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "end_date": {
+              "type": "string"
+            },
+            "type": {
+              "type": "string"
+            }
+          },
+          "required": []
+        },
+        "status": {
+          "type": "string"
+        },
+        "send_announcement_email": {
+          "type": "string"
+        },
+        "content_type": {
+          "type": "string"
+        },
+        "media_images": {
+          "type": "string"
+        },
+        "topic_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "message": {
+          "type": "string",
+          "minLength": 1
+        },
+        "title": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "message"
+      ],
+      "additionalProperties": false
+    },
+    "bodyRequired": true,
+    "privateOutput": false,
+    "source": {
+      "repo": "WPManageNinja/fluent-community-developer-docs",
+      "relativeFile": "feeds/update-feed.json",
+      "sha256": "1bb72a4da55b68ec34e36d8411496d4cf8bda27753c472f591005ad19b831deb",
+      "documentationUrl": "https://dev.fluentcommunity.co/restapi/operations/feeds/update-feed"
+    }
+  },
+  {
+    "name": "fc_delete_feed",
+    "operationId": "deleteFeed",
+    "title": "fc delete feed",
+    "description": "Deletes a post from the community.\n\nController: `FeedsController@deleteFeed`\nRoute source: `fluent-community/app/Http/Routes/api.php:64` Explicit local confirmation is required; hooks, announcements and automations may affect other people. No retries.",
+    "method": "DELETE",
+    "path": "/fluent-community/v2/feeds/{feed_id}",
+    "group": "community_feeds",
+    "risk": "destructive",
+    "params": [
+      {
+        "name": "feed_id",
+        "key": "feed_id",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "integer",
+          "description": "Feed ID extracted from the URL path.",
+          "minimum": 1
+        },
+        "style": "form",
+        "explode": true
+      }
+    ],
+    "bodySchema": null,
+    "bodyRequired": false,
+    "privateOutput": false,
+    "source": {
+      "repo": "WPManageNinja/fluent-community-developer-docs",
+      "relativeFile": "feeds/delete-feed.json",
+      "sha256": "5ad172c34386026ff0750e4e18d5e36077a5ab3103268eae7317bc0402a2616c",
+      "documentationUrl": "https://dev.fluentcommunity.co/restapi/operations/feeds/delete-feed"
+    }
+  },
+  {
+    "name": "fc_list_comments",
+    "operationId": "listFeedComments",
+    "title": "fc list comments",
+    "description": "Returns every comment on a post in chronological order, with each author profile attached and the current user liked state flagged.\n\nController: `CommentsController@getComments`\nRoute source: `fluent-community/app/Http/Routes/api.php:55`",
+    "method": "GET",
+    "path": "/fluent-community/v2/feeds/{feed_id}/comments",
+    "group": "community_comments",
+    "risk": "read",
+    "params": [
+      {
+        "name": "feed_id",
+        "key": "feed_id",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "integer",
+          "description": "Feed ID extracted from the URL path.",
+          "minimum": 1
+        },
+        "style": "form",
+        "explode": true
+      }
+    ],
+    "bodySchema": null,
+    "bodyRequired": false,
+    "privateOutput": false,
+    "source": {
+      "repo": "WPManageNinja/fluent-community-developer-docs",
+      "relativeFile": "comments/list-feed-comments.json",
+      "sha256": "f8ed7fb7ecf7bd36a7911c431391e2cd3ff5137ff4349bd49354f6307534120e",
+      "documentationUrl": "https://dev.fluentcommunity.co/restapi/operations/comments/list-feed-comments"
+    }
+  },
+  {
+    "name": "fc_create_comment",
+    "operationId": "createComment",
+    "title": "fc create comment",
+    "description": "Posts a comment or a threaded reply on a feed item, renders its Markdown, links any attached media and bumps the post comment count.\n\nController: `CommentsController@store`\nRoute source: `fluent-community/app/Http/Routes/api.php:56` Explicit local confirmation is required; hooks, announcements and automations may affect other people. No retries.",
+    "method": "POST",
+    "path": "/fluent-community/v2/feeds/{feed_id}/comments",
+    "group": "community_comments",
+    "risk": "destructive",
+    "params": [
+      {
+        "name": "feed_id",
+        "key": "feed_id",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "integer",
+          "description": "Feed ID extracted from the URL path.",
+          "minimum": 1
+        },
+        "style": "form",
+        "explode": true
+      }
+    ],
+    "bodySchema": {
+      "type": "object",
+      "properties": {
+        "comment": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "comment"
+      ]
+    },
+    "bodyRequired": true,
+    "privateOutput": false,
+    "source": {
+      "repo": "WPManageNinja/fluent-community-developer-docs",
+      "relativeFile": "comments/create-comment.json",
+      "sha256": "fa2a04eb06ac874c598bca7cfe6272204462d064e15fd6fae911f2497d8e6c09",
+      "documentationUrl": "https://dev.fluentcommunity.co/restapi/operations/comments/create-comment"
+    }
+  },
+  {
+    "name": "fc_update_comment",
+    "operationId": "updateComment",
+    "title": "fc update comment",
+    "description": "Replaces the body of an existing comment, re-renders it, and reconciles its attached media with the submitted list.\n\nController: `CommentsController@update`\nRoute source: `fluent-community/app/Http/Routes/api.php:57` Explicit local confirmation is required; hooks, announcements and automations may affect other people. No retries.",
+    "method": "POST",
+    "path": "/fluent-community/v2/feeds/{feed_id}/comments/{comment_id}",
+    "group": "community_comments",
+    "risk": "destructive",
+    "params": [
+      {
+        "name": "feed_id",
+        "key": "feed_id",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "integer",
+          "description": "Feed ID extracted from the URL path.",
+          "minimum": 1
+        },
+        "style": "form",
+        "explode": true
+      },
+      {
+        "name": "comment_id",
+        "key": "comment_id",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "integer",
+          "description": "Comment ID extracted from the URL path.",
+          "minimum": 1
+        },
+        "style": "form",
+        "explode": true
+      }
+    ],
+    "bodySchema": {
+      "type": "object",
+      "properties": {
+        "comment": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "comment"
+      ]
+    },
+    "bodyRequired": true,
+    "privateOutput": false,
+    "source": {
+      "repo": "WPManageNinja/fluent-community-developer-docs",
+      "relativeFile": "comments/update-comment.json",
+      "sha256": "d3a25880ece2f8461a911dddd431d279d054d5195b8b357d53d895d07428516b",
+      "documentationUrl": "https://dev.fluentcommunity.co/restapi/operations/comments/update-comment"
+    }
+  },
+  {
+    "name": "fc_delete_comment",
+    "operationId": "deleteComment",
+    "title": "fc delete comment",
+    "description": "Deletes a comment, recounts the comments on its post and hands any attached media to the media cleanup hook.\n\nController: `CommentsController@deleteComment`\nRoute source: `fluent-community/app/Http/Routes/api.php:60` Explicit local confirmation is required; hooks, announcements and automations may affect other people. No retries.",
+    "method": "DELETE",
+    "path": "/fluent-community/v2/feeds/{feed_id}/comments/{comment_id}",
+    "group": "community_comments",
+    "risk": "destructive",
+    "params": [
+      {
+        "name": "feed_id",
+        "key": "feed_id",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "integer",
+          "description": "Feed ID extracted from the URL path.",
+          "minimum": 1
+        },
+        "style": "form",
+        "explode": true
+      },
+      {
+        "name": "comment_id",
+        "key": "comment_id",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "integer",
+          "description": "Comment ID extracted from the URL path.",
+          "minimum": 1
+        },
+        "style": "form",
+        "explode": true
+      }
+    ],
+    "bodySchema": null,
+    "bodyRequired": false,
+    "privateOutput": false,
+    "source": {
+      "repo": "WPManageNinja/fluent-community-developer-docs",
+      "relativeFile": "comments/delete-comment.json",
+      "sha256": "6b3bbd6c1cad6857a838361dd15147fa0b53e74d06300cac32a7f80b2f1cf96d",
+      "documentationUrl": "https://dev.fluentcommunity.co/restapi/operations/comments/delete-comment"
+    }
+  },
+  {
+    "name": "fc_react_to_feed",
+    "operationId": "toggleFeedReaction",
+    "title": "fc react to feed",
+    "description": "Adds or removes the current user reaction on a post and returns the updated count : a second route onto the same behaviour as the reactions toggle endpoint.\n\nController: `CommentsController@addOrRemovePostReact`\nRoute source: `fluent-community/app/Http/Routes/api.php:59` Toggle semantics are not idempotent; inspect state before deliberately repeating. Explicit local confirmation is required; hooks, announcements and automations may affect other people. No retries.",
+    "method": "POST",
+    "path": "/fluent-community/v2/feeds/{feed_id}/react",
+    "group": "community_reactions",
+    "risk": "destructive",
+    "params": [
+      {
+        "name": "feed_id",
+        "key": "feed_id",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "integer",
+          "description": "Feed ID extracted from the URL path.",
+          "minimum": 1
+        },
+        "style": "form",
+        "explode": true
+      }
+    ],
+    "bodySchema": {
+      "type": "object",
+      "properties": {
+        "react_type": {
+          "type": "string"
+        },
+        "remove": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "bodyRequired": false,
+    "privateOutput": false,
+    "source": {
+      "repo": "WPManageNinja/fluent-community-developer-docs",
+      "relativeFile": "reactions/toggle-feed-reaction.json",
+      "sha256": "9466534ed7d5aab020469bb17bf2da21ef797f9e153e5cf34c149e8801a56e75",
+      "documentationUrl": "https://dev.fluentcommunity.co/restapi/operations/reactions/toggle-feed-reaction"
+    }
+  },
+  {
+    "name": "fc_list_courses",
+    "operationId": "listAdminCourses",
+    "title": "fc list courses",
+    "description": "Returns the paginated list of courses the current user may manage, each with its student count and its section and lesson totals.\n\nController: `CourseAdminController@getCourses`\nRoute source: `fluent-community/Modules/Course/Http/course_api.php:22`",
+    "method": "GET",
+    "path": "/fluent-community/v2/admin/courses",
+    "group": "community_courses",
+    "risk": "read",
+    "params": [
+      {
+        "name": "status",
+        "key": "status",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "description": "Status read via `$request->getSafe()` in getCourses()."
+        },
+        "style": "form",
+        "explode": true
+      },
+      {
+        "name": "sort_by",
+        "key": "sort_by",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "default": "latest",
+          "description": "Sort By read via `$request->getSafe()` in getCourses()."
+        },
+        "style": "form",
+        "explode": true
+      },
+      {
+        "name": "topic_slug",
+        "key": "topic_slug",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "description": "Topic Slug read via `$request->getSafe()` in getCourses()."
+        },
+        "style": "form",
+        "explode": true
+      },
+      {
+        "name": "search",
+        "key": "search",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "description": "Search read via `$request->getSafe()` in getCourses()."
+        },
+        "style": "form",
+        "explode": true
+      },
+      {
+        "name": "with_categories",
+        "key": "with_categories",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "description": "With Categories read via `$request->get()` in getCourses()."
+        },
+        "style": "form",
+        "explode": true
+      }
+    ],
+    "bodySchema": null,
+    "bodyRequired": false,
+    "privateOutput": false,
+    "source": {
+      "repo": "WPManageNinja/fluent-community-developer-docs",
+      "relativeFile": "courses/list-admin-courses.json",
+      "sha256": "fbe5b37bf5b4ab9167c4ba2f4700ff27b4c0d9ac0269365879adeb56dc8d6e81",
+      "documentationUrl": "https://dev.fluentcommunity.co/restapi/operations/courses/list-admin-courses"
+    }
+  },
+  {
+    "name": "fc_get_course",
+    "operationId": "getAdminCourse",
+    "title": "fc get course",
+    "description": "Returns one course in its editable form, with the lock screen configuration, the attached category ids and : when it has students : the completion count and average progress.\n\nController: `CourseAdminController@findCourse`\nRoute source: `fluent-community/Modules/Course/Http/course_api.php:24`",
+    "method": "GET",
+    "path": "/fluent-community/v2/admin/courses/{course_id}",
+    "group": "community_courses",
+    "risk": "read",
+    "params": [
+      {
+        "name": "course_id",
+        "key": "course_id",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "integer",
+          "description": "Course ID extracted from the URL path.",
+          "minimum": 1
+        },
+        "style": "form",
+        "explode": true
+      }
+    ],
+    "bodySchema": null,
+    "bodyRequired": false,
+    "privateOutput": false,
+    "source": {
+      "repo": "WPManageNinja/fluent-community-developer-docs",
+      "relativeFile": "courses/get-admin-course.json",
+      "sha256": "97e8be1260f32298146355718fa4fa3a6c4442b029c477648e3f559d2ee8c21c",
+      "documentationUrl": "https://dev.fluentcommunity.co/restapi/operations/courses/get-admin-course"
+    }
+  },
+  {
+    "name": "fc_course_students",
+    "operationId": "listCourseStudents",
+    "title": "fc course students",
+    "description": "Returns the paginated roster of a course, each student carrying their enrolment pivot and their completion percentage.\n\nController: `CourseAdminController@getCourseStudents`\nRoute source: `fluent-community/Modules/Course/Http/course_api.php:29`",
+    "method": "GET",
+    "path": "/fluent-community/v2/admin/courses/{course_id}/students",
+    "group": "community_courses",
+    "risk": "read",
+    "params": [
+      {
+        "name": "course_id",
+        "key": "course_id",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "integer",
+          "description": "Course ID extracted from the URL path.",
+          "minimum": 1
+        },
+        "style": "form",
+        "explode": true
+      },
+      {
+        "name": "search",
+        "key": "search",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "description": "Search read via `$request->getSafe()` in getCourseStudents()."
+        },
+        "style": "form",
+        "explode": true
+      },
+      {
+        "name": "sort_by",
+        "key": "sort_by",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "default": "created_at",
+          "description": "Sort By read via `$request->getSafe()` in getCourseStudents()."
+        },
+        "style": "form",
+        "explode": true
+      },
+      {
+        "name": "sort_dir",
+        "key": "sort_dir",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "description": "Sort Dir read via `$request->getSafe()` in getCourseStudents()."
+        },
+        "style": "form",
+        "explode": true
+      }
+    ],
+    "bodySchema": null,
+    "bodyRequired": false,
+    "privateOutput": false,
+    "source": {
+      "repo": "WPManageNinja/fluent-community-developer-docs",
+      "relativeFile": "courses/list-course-students.json",
+      "sha256": "32ed61f9ac03b004f4816b462b05db21a5a4e52bbc9215d4db3b6e40e190e973",
+      "documentationUrl": "https://dev.fluentcommunity.co/restapi/operations/courses/list-course-students"
+    }
+  },
+  {
+    "name": "fc_course_lessons",
+    "operationId": "listCourseLessons",
+    "title": "fc course lessons",
+    "description": "Returns the lessons of a course in display order, optionally narrowed to one section.\n\nController: `CourseAdminController@getLessons`\nRoute source: `fluent-community/Modules/Course/Http/course_api.php:52`",
+    "method": "GET",
+    "path": "/fluent-community/v2/admin/courses/{course_id}/lessons",
+    "group": "community_courses",
+    "risk": "read",
+    "params": [
+      {
+        "name": "course_id",
+        "key": "course_id",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "integer",
+          "description": "Course ID extracted from the URL path.",
+          "minimum": 1
+        },
+        "style": "form",
+        "explode": true
+      },
+      {
+        "name": "topic_id",
+        "key": "topic_id",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "description": "Topic ID read via `$request->get()` in getLessons()."
+        },
+        "style": "form",
+        "explode": true
+      }
+    ],
+    "bodySchema": null,
+    "bodyRequired": false,
+    "privateOutput": false,
+    "source": {
+      "repo": "WPManageNinja/fluent-community-developer-docs",
+      "relativeFile": "courses/list-course-lessons.json",
+      "sha256": "4e3f913a65d7ac5ad048f63688e4baa4d1c744d02e6348e276210dcaf004e91a",
+      "documentationUrl": "https://dev.fluentcommunity.co/restapi/operations/courses/list-course-lessons"
+    }
+  },
+  {
+    "name": "fc_space_members",
+    "operationId": "listSpaceMembers",
+    "title": "fc space members",
+    "description": "Returns the paginated active membership of a space, each entry carrying the member profile and their role, plus the count of outstanding join requests.\n\nController: `SpaceController@getMembers`\nRoute source: `fluent-community/app/Http/Routes/api.php:18`",
+    "method": "GET",
+    "path": "/fluent-community/v2/spaces/{spaceSlug}/members",
+    "group": "community_members",
+    "risk": "read",
+    "params": [
+      {
+        "name": "spaceSlug",
+        "key": "slug",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "description": "SpaceSlug extracted from the URL path.",
+          "minLength": 1,
+          "pattern": "^(?!\\.{1,2}$)[^/\\\\\\x00-\\x1f?#]+$"
+        },
+        "style": "form",
+        "explode": true
+      },
+      {
+        "name": "search",
+        "key": "search",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "description": "Search read via `$request->getSafe()` in getMembers()."
+        },
+        "style": "form",
+        "explode": true
+      },
+      {
+        "name": "status",
+        "key": "status",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "description": "Status read via `$request->get()` in getMembers()."
+        },
+        "style": "form",
+        "explode": true
+      },
+      {
+        "name": "sort_by",
+        "key": "sort_by",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "default": "created_at",
+          "description": "Sort By read via `$request->getSafe()` in getMembers()."
+        },
+        "style": "form",
+        "explode": true
+      },
+      {
+        "name": "sort_dir",
+        "key": "sort_dir",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "description": "Sort Dir read via `$request->getSafe()` in getMembers()."
+        },
+        "style": "form",
+        "explode": true
+      }
+    ],
+    "bodySchema": null,
+    "bodyRequired": false,
+    "privateOutput": false,
+    "source": {
+      "repo": "WPManageNinja/fluent-community-developer-docs",
+      "relativeFile": "members/list-space-members.json",
+      "sha256": "38ab53f034c99493edf25fd9fea2283b6e7a6d2dcb1696cca3406453bce7e647",
+      "documentationUrl": "https://dev.fluentcommunity.co/restapi/operations/members/list-space-members"
+    }
+  },
+  {
+    "name": "fc_get_profile",
+    "operationId": "getProfile",
+    "title": "fc get profile",
+    "description": "Returns one member public profile by username, with the navigation tabs the portal should render for that member.\n\nController: `ProfileController@getProfile`\nRoute source: `fluent-community/app/Http/Routes/api.php:89`",
+    "method": "GET",
+    "path": "/fluent-community/v2/profile/{username}",
+    "group": "community_profile",
+    "risk": "read",
+    "params": [
+      {
+        "name": "username",
+        "key": "username",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "description": "Username extracted from the URL path.",
+          "minLength": 1,
+          "pattern": "^(?!\\.{1,2}$)[^/\\\\\\x00-\\x1f?#]+$"
+        },
+        "style": "form",
+        "explode": true
+      }
+    ],
+    "bodySchema": null,
+    "bodyRequired": false,
+    "privateOutput": false,
+    "source": {
+      "repo": "WPManageNinja/fluent-community-developer-docs",
+      "relativeFile": "profile/get-profile.json",
+      "sha256": "9695dd47d7b37cf08268842ef170cf269ee573e1e0ccf6ae3f5dd99d83df8043",
+      "documentationUrl": "https://dev.fluentcommunity.co/restapi/operations/profile/get-profile"
+    }
+  },
+  {
+    "name": "fc_scheduled_posts",
+    "operationId": "listScheduledPosts",
+    "title": "fc scheduled posts",
+    "description": "Returns the paginated list of posts one member has scheduled but not yet published, soonest first.\n\nController: `SchedulePostsController@getScheduledPosts`\nRoute source: `fluent-community-pro/app/Http/Routes/api.php:112` Requires FluentCommunity Pro and its native scheduled-post permission. It is not a scheduling action.",
+    "method": "GET",
+    "path": "/fluent-community/v2/scheduled-posts",
+    "group": "community_feeds",
+    "risk": "read",
+    "params": [
+      {
+        "name": "user_id",
+        "key": "user_id",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "default": "$currentUserId",
+          "description": "User ID read via `$request->getSafe()` in getScheduledPosts()."
+        },
+        "style": "form",
+        "explode": true
+      }
+    ],
+    "bodySchema": null,
+    "bodyRequired": false,
+    "privateOutput": false,
+    "source": {
+      "repo": "WPManageNinja/fluent-community-developer-docs",
+      "relativeFile": "feeds/list-scheduled-posts.json",
+      "sha256": "68705dd6014b4bbf2348de07e5c9674c0a4d7bfa15c844b7b03e711080f0d949",
+      "documentationUrl": "https://dev.fluentcommunity.co/restapi/operations/feeds/list-scheduled-posts"
+    }
+  },
+  {
+    "name": "fc_analytics_top_members",
+    "operationId": "listTopMembersReport",
+    "title": "fc analytics top members",
+    "description": "Returns ten member profiles ordered by lifetime points, drawn from those who joined within the requested range.\n\nController: `MembersReportsController@getTopMembers`\nRoute source: `fluent-community-pro/app/Http/Routes/api.php:82` Requires FluentCommunity Pro native report permissions; the response is not a whole-site audience export.",
+    "method": "GET",
+    "path": "/fluent-community/v2/analytics/members/top-members",
+    "group": "community_reports",
+    "risk": "read",
+    "params": [],
+    "bodySchema": null,
+    "bodyRequired": false,
+    "privateOutput": false,
+    "source": {
+      "repo": "WPManageNinja/fluent-community-developer-docs",
+      "relativeFile": "reports/list-top-members-report.json",
+      "sha256": "2cd2784a85c19e281df77dc4d8bbad93bc422dd905f541dabd68e5e3d85ddec6",
+      "documentationUrl": "https://dev.fluentcommunity.co/restapi/operations/reports/list-top-members-report"
+    }
+  },
+  {
+    "name": "fc_analytics_top_commenters",
+    "operationId": "listTopCommentersReport",
+    "title": "fc analytics top commenters",
+    "description": "Returns the ten members who wrote the most comments within the requested range, each with their comment count.\n\nController: `MembersReportsController@topCommenters`\nRoute source: `fluent-community-pro/app/Http/Routes/api.php:84` Requires FluentCommunity Pro native report permissions; the response is not a whole-site audience export.",
+    "method": "GET",
+    "path": "/fluent-community/v2/analytics/members/top-commenters",
+    "group": "community_reports",
+    "risk": "read",
+    "params": [],
+    "bodySchema": null,
+    "bodyRequired": false,
+    "privateOutput": false,
+    "source": {
+      "repo": "WPManageNinja/fluent-community-developer-docs",
+      "relativeFile": "reports/list-top-commenters-report.json",
+      "sha256": "12877f3fcebedeb6f936ec8b11dc66c0bff99cc378c360aa0aaea2fd407da3fd",
+      "documentationUrl": "https://dev.fluentcommunity.co/restapi/operations/reports/list-top-commenters-report"
+    }
+  },
+  {
+    "name": "fc_analytics_top_post_starters",
+    "operationId": "listTopPostStartersReport",
+    "title": "fc analytics top post starters",
+    "description": "Returns the ten members who published the most posts within the requested range, each with their post count.\n\nController: `MembersReportsController@topPostStarter`\nRoute source: `fluent-community-pro/app/Http/Routes/api.php:83` Requires FluentCommunity Pro native report permissions; the response is not a whole-site audience export.",
+    "method": "GET",
+    "path": "/fluent-community/v2/analytics/members/top-post-starters",
+    "group": "community_reports",
+    "risk": "read",
+    "params": [],
+    "bodySchema": null,
+    "bodyRequired": false,
+    "privateOutput": false,
+    "source": {
+      "repo": "WPManageNinja/fluent-community-developer-docs",
+      "relativeFile": "reports/list-top-post-starters-report.json",
+      "sha256": "99dcf8d37ae5747ca87f2cd74d908c9225da99bcb63d893b6da4982845cd253e",
+      "documentationUrl": "https://dev.fluentcommunity.co/restapi/operations/reports/list-top-post-starters-report"
+    }
+  },
+  {
+    "name": "fc_analytics_member_activity",
+    "operationId": "getMemberActivityReport",
+    "title": "fc analytics member activity",
+    "description": "Returns a gap-filled time series of member signups across the requested range.\n\nController: `MembersReportsController@activity`\nRoute source: `fluent-community-pro/app/Http/Routes/api.php:81` Requires FluentCommunity Pro native report permissions; the response is not a whole-site audience export.",
+    "method": "GET",
+    "path": "/fluent-community/v2/analytics/members/activity",
+    "group": "community_reports",
+    "risk": "read",
+    "params": [],
+    "bodySchema": null,
+    "bodyRequired": false,
+    "privateOutput": false,
+    "source": {
+      "repo": "WPManageNinja/fluent-community-developer-docs",
+      "relativeFile": "reports/get-member-activity-report.json",
+      "sha256": "9176e3039bb9b15bc6af78187f60b1bad17e87b16da821ccd1cbebc31105ee83",
+      "documentationUrl": "https://dev.fluentcommunity.co/restapi/operations/reports/get-member-activity-report"
+    }
+  },
+  {
+    "name": "ff_list_forms",
+    "operationId": "ff_list_forms",
+    "title": "ff list forms",
+    "description": "Read one Forms page with current native sorting and date filters. Requires fluentform_dashboard_access and applicable native form permissions. Not an all-forms snapshot.",
+    "method": "GET",
+    "path": "/fluentform/v1/forms",
+    "group": "forms",
+    "risk": "read",
+    "params": [
+      {
+        "name": "search",
+        "key": "search",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "string"
+        },
+        "style": "form",
+        "explode": true
+      },
+      {
+        "name": "status",
+        "key": "status",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "string"
+        },
+        "style": "form",
+        "explode": true
+      },
+      {
+        "name": "filter_by",
+        "key": "filter_by",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "string"
+        },
+        "style": "form",
+        "explode": true
+      },
+      {
+        "name": "date_range",
+        "key": "date_range",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "style": "form",
+        "explode": true
+      },
+      {
+        "name": "sort_column",
+        "key": "sort_column",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "string"
+        },
+        "style": "form",
+        "explode": true
+      },
+      {
+        "name": "sort_by",
+        "key": "sort_by",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "enum": [
+            "ASC",
+            "DESC"
+          ]
+        },
+        "style": "form",
+        "explode": true
+      },
+      {
+        "name": "per_page",
+        "key": "per_page",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100
+        },
+        "style": "form",
+        "explode": true
+      },
+      {
+        "name": "page",
+        "key": "page",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 10000
+        },
+        "style": "form",
+        "explode": true
+      }
+    ],
+    "bodySchema": null,
+    "bodyRequired": false,
+    "privateOutput": false,
+    "source": {
+      "repo": "fluentform/fluentform",
+      "sha": "9809093dd2ac209cf2f632d882114d0e1257c10b",
+      "documentationUrl": "https://github.com/fluentform/fluentform/blob/9809093dd2ac209cf2f632d882114d0e1257c10b/app/Http/Routes/api.php",
+      "relativeFiles": [
+        "app/Http/Routes/api.php",
+        "app/Services/Form/FormService.php",
+        "app/Services/Submission/SubmissionService.php",
+        "app/Services/Report/ReportService.php",
+        "app/Models/Submission.php",
+        "app/Services/Report/ReportHelper.php",
+        "app/Http/Policies/FormPolicy.php",
+        "app/Http/Policies/SubmissionPolicy.php",
+        "app/Http/Policies/ReportPolicy.php"
+      ]
+    }
+  },
+  {
+    "name": "ff_get_form",
+    "operationId": "ff_get_form",
+    "title": "ff get form",
+    "description": "Read one native form with formMeta; may include private integration/settings data. Requires fluentform_forms_manager for the selected form.",
+    "method": "GET",
+    "path": "/fluentform/v1/forms/{form_id}",
+    "group": "forms",
+    "risk": "read",
+    "params": [
+      {
+        "name": "form_id",
+        "key": "form_id",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "style": "form",
+        "explode": true
+      }
+    ],
+    "bodySchema": null,
+    "bodyRequired": false,
+    "privateOutput": false,
+    "source": {
+      "repo": "fluentform/fluentform",
+      "sha": "9809093dd2ac209cf2f632d882114d0e1257c10b",
+      "documentationUrl": "https://github.com/fluentform/fluentform/blob/9809093dd2ac209cf2f632d882114d0e1257c10b/app/Http/Routes/api.php",
+      "relativeFiles": [
+        "app/Http/Routes/api.php",
+        "app/Services/Form/FormService.php",
+        "app/Services/Submission/SubmissionService.php",
+        "app/Services/Report/ReportService.php",
+        "app/Models/Submission.php",
+        "app/Services/Report/ReportHelper.php",
+        "app/Http/Policies/FormPolicy.php",
+        "app/Http/Policies/SubmissionPolicy.php",
+        "app/Http/Policies/ReportPolicy.php"
+      ]
+    }
+  },
+  {
+    "name": "ff_form_fields",
+    "operationId": "ff_form_fields",
+    "title": "ff form fields",
+    "description": "Read current native field definitions; no field edits. Requires fluentform_forms_manager for the selected form.",
+    "method": "GET",
+    "path": "/fluentform/v1/forms/{form_id}/fields",
+    "group": "forms",
+    "risk": "read",
+    "params": [
+      {
+        "name": "form_id",
+        "key": "form_id",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "style": "form",
+        "explode": true
+      }
+    ],
+    "bodySchema": null,
+    "bodyRequired": false,
+    "privateOutput": false,
+    "source": {
+      "repo": "fluentform/fluentform",
+      "sha": "9809093dd2ac209cf2f632d882114d0e1257c10b",
+      "documentationUrl": "https://github.com/fluentform/fluentform/blob/9809093dd2ac209cf2f632d882114d0e1257c10b/app/Http/Routes/api.php",
+      "relativeFiles": [
+        "app/Http/Routes/api.php",
+        "app/Services/Form/FormService.php",
+        "app/Services/Submission/SubmissionService.php",
+        "app/Services/Report/ReportService.php",
+        "app/Models/Submission.php",
+        "app/Services/Report/ReportHelper.php",
+        "app/Http/Policies/FormPolicy.php",
+        "app/Http/Policies/SubmissionPolicy.php",
+        "app/Http/Policies/ReportPolicy.php"
+      ]
+    }
+  },
+  {
+    "name": "ff_list_submissions",
+    "operationId": "ff_list_submissions",
+    "title": "ff list submissions",
+    "description": "Read one native individual-entry page for an explicitly selected form. Corrects old GET /report/submissions. Requires fluentform_entries_viewer for that form. Entry bodies are private; no automatic detail call or mark-as-read action.",
+    "method": "GET",
+    "path": "/fluentform/v1/submissions",
+    "group": "forms",
+    "risk": "read",
+    "params": [
+      {
+        "name": "form_id",
+        "key": "form_id",
+        "in": "query",
+        "required": true,
+        "schema": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "style": "form",
+        "explode": true
+      },
+      {
+        "name": "per_page",
+        "key": "per_page",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100
+        },
+        "style": "form",
+        "explode": true
+      },
+      {
+        "name": "page",
+        "key": "page",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 10000
+        },
+        "style": "form",
+        "explode": true
+      },
+      {
+        "name": "search",
+        "key": "search",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "string"
+        },
+        "style": "form",
+        "explode": true
+      },
+      {
+        "name": "entry_type",
+        "key": "entry_type",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "string"
+        },
+        "style": "form",
+        "explode": true
+      },
+      {
+        "name": "date_range",
+        "key": "date_range",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "style": "form",
+        "explode": true
+      },
+      {
+        "name": "payment_statuses",
+        "key": "payment_statuses",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "style": "form",
+        "explode": true
+      },
+      {
+        "name": "sort_by",
+        "key": "sort_by",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "enum": [
+            "ASC",
+            "DESC"
+          ]
+        },
+        "style": "form",
+        "explode": true
+      }
+    ],
+    "bodySchema": null,
+    "bodyRequired": false,
+    "privateOutput": false,
+    "source": {
+      "repo": "fluentform/fluentform",
+      "sha": "9809093dd2ac209cf2f632d882114d0e1257c10b",
+      "documentationUrl": "https://github.com/fluentform/fluentform/blob/9809093dd2ac209cf2f632d882114d0e1257c10b/app/Http/Routes/api.php",
+      "relativeFiles": [
+        "app/Http/Routes/api.php",
+        "app/Services/Form/FormService.php",
+        "app/Services/Submission/SubmissionService.php",
+        "app/Services/Report/ReportService.php",
+        "app/Models/Submission.php",
+        "app/Services/Report/ReportHelper.php",
+        "app/Http/Policies/FormPolicy.php",
+        "app/Http/Policies/SubmissionPolicy.php",
+        "app/Http/Policies/ReportPolicy.php"
+      ]
+    }
+  },
+  {
+    "name": "ff_form_report",
+    "operationId": "ff_form_report",
+    "title": "ff form report",
+    "description": "Read the native form report with explicit approval because ReportService::form invokes ReportHelper::maybeMigrateData. It may update stored reporting data. Requires native form-scoped fluentform_entries_viewer; hidden/refused in read-only mode. No automatic retries.",
+    "method": "GET",
+    "path": "/fluentform/v1/report/forms/{form_id}",
+    "group": "forms",
+    "risk": "destructive",
+    "params": [
+      {
+        "name": "form_id",
+        "key": "form_id",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "style": "form",
+        "explode": true
+      },
+      {
+        "name": "statuses",
+        "key": "statuses",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "style": "form",
+        "explode": true
+      }
+    ],
+    "bodySchema": null,
+    "bodyRequired": false,
+    "privateOutput": false,
+    "source": {
+      "repo": "fluentform/fluentform",
+      "sha": "9809093dd2ac209cf2f632d882114d0e1257c10b",
+      "documentationUrl": "https://github.com/fluentform/fluentform/blob/9809093dd2ac209cf2f632d882114d0e1257c10b/app/Http/Routes/api.php",
+      "relativeFiles": [
+        "app/Http/Routes/api.php",
+        "app/Services/Form/FormService.php",
+        "app/Services/Submission/SubmissionService.php",
+        "app/Services/Report/ReportService.php",
+        "app/Models/Submission.php",
+        "app/Services/Report/ReportHelper.php",
+        "app/Http/Policies/FormPolicy.php",
+        "app/Http/Policies/SubmissionPolicy.php",
+        "app/Http/Policies/ReportPolicy.php"
+      ]
+    }
+  },
+  {
+    "name": "ff_form_stats",
+    "operationId": "ff_form_stats",
+    "title": "ff form stats",
+    "description": "Read native date-range form statistics. Requires form-scoped fluentform_entries_viewer when form_id is selected; all-forms permission otherwise. Native reports may change via site hooks and version-specific provider behavior. Not guaranteed lifetime revenue or all plugin statistics.",
+    "method": "GET",
+    "path": "/fluentform/v1/report/form-stats",
+    "group": "forms",
+    "risk": "read",
+    "params": [
+      {
+        "name": "form_id",
+        "key": "form_id",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "style": "form",
+        "explode": true
+      },
+      {
+        "name": "start_date",
+        "key": "start_date",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "string"
+        },
+        "style": "form",
+        "explode": true
+      },
+      {
+        "name": "end_date",
+        "key": "end_date",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "string"
+        },
+        "style": "form",
+        "explode": true
+      },
+      {
+        "name": "metric",
+        "key": "metric",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "string"
+        },
+        "style": "form",
+        "explode": true
+      }
+    ],
+    "bodySchema": null,
+    "bodyRequired": false,
+    "privateOutput": false,
+    "source": {
+      "repo": "fluentform/fluentform",
+      "sha": "9809093dd2ac209cf2f632d882114d0e1257c10b",
+      "documentationUrl": "https://github.com/fluentform/fluentform/blob/9809093dd2ac209cf2f632d882114d0e1257c10b/app/Http/Routes/api.php",
+      "relativeFiles": [
+        "app/Http/Routes/api.php",
+        "app/Services/Form/FormService.php",
+        "app/Services/Submission/SubmissionService.php",
+        "app/Services/Report/ReportService.php",
+        "app/Models/Submission.php",
+        "app/Services/Report/ReportHelper.php",
+        "app/Http/Policies/FormPolicy.php",
+        "app/Http/Policies/SubmissionPolicy.php",
+        "app/Http/Policies/ReportPolicy.php"
+      ]
+    }
+  },
+  {
+    "name": "get_current_user",
+    "operationId": "wordpress_current_user",
+    "title": "Read current WordPress user",
+    "description": "One authenticated WordPress current-user GET with view context; verifies one user read, not site ownership or all plugin permissions. Native private output is untrusted.",
+    "method": "GET",
+    "path": "/wp/v2/users/me",
+    "group": "wordpress",
+    "risk": "read",
+    "params": [
+      {
+        "name": "context",
+        "key": "context",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "enum": [
+            "view",
+            "embed"
+          ]
+        },
+        "style": "form",
+        "explode": true
+      }
+    ],
+    "bodySchema": null,
+    "bodyRequired": false,
+    "privateOutput": false,
+    "source": {
+      "documentationUrl": "https://developer.wordpress.org/rest-api/reference/users/"
+    }
+  }
+]

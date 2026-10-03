@@ -1,0 +1,98 @@
+{
+  "manifest_version": "0.2",
+  "name": "fluent-wp",
+  "display_name": "Fluent WordPress MCP Server & CLI",
+  "version": "2.0.0",
+  "description": "54 shared native tools and remote tasks for FluentCRM, FluentCommunity and Fluent Forms with private site profiles and cross-plugin snapshots.",
+  "long_description": "Remote local stdio companion with reviewed native arguments, mandatory local confirmation for mutations/stateful reports/private files, and direct read-only enforcement. Official plugin MCPs and WP-CLI commands are distinct options. Application Password authentication; no browser/session import or automatic retries.",
+  "author": {
+    "name": "Navid Moazzez",
+    "url": "https://navid.me"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/thenavidm/fluent-wp-mcp-cli"
+  },
+  "homepage": "https://navid.me/mcp-servers/fluent-wp",
+  "documentation": "https://github.com/thenavidm/fluent-wp-mcp-cli#readme",
+  "support": "https://github.com/thenavidm/fluent-wp-mcp-cli/issues",
+  "license": "AGPL-3.0",
+  "keywords": [
+    "fluentcrm",
+    "fluentcommunity",
+    "fluentforms",
+    "wordpress",
+    "mcp",
+    "cli"
+  ],
+  "server": {
+    "type": "node",
+    "entry_point": "server/index.js",
+    "mcp_config": {
+      "command": "node",
+      "args": [
+        "${__dirname}/server/index.js"
+      ],
+      "env": {
+        "FLUENT_WP_SITE_URL": "${user_config.site_url}",
+        "FLUENT_WP_USER": "${user_config.username}",
+        "FLUENT_WP_APP_PASSWORD": "${user_config.app_password}",
+        "FLUENT_WP_PASSWORD_FILE": "${user_config.password_file}",
+        "FLUENT_WP_READ_ONLY": "${user_config.read_only}",
+        "FLUENT_WP_ALLOW_DESTRUCTIVE": "${user_config.allow_destructive}"
+      }
+    }
+  },
+  "user_config": {
+    "site_url": {
+      "type": "string",
+      "title": "Trusted HTTPS WordPress site root",
+      "description": "Your own intended site URL, optionally an install subdirectory. Do not include wp-json, a query or embedded credentials.",
+      "required": false
+    },
+    "username": {
+      "type": "string",
+      "title": "WordPress username",
+      "description": "The intended user with native plugin permissions.",
+      "required": false
+    },
+    "app_password": {
+      "type": "string",
+      "title": "Dedicated Application Password",
+      "description": "Sensitive private application password. Choose this or password_file; never the main login password.",
+      "sensitive": true,
+      "required": false
+    },
+    "password_file": {
+      "type": "string",
+      "title": "Private application-password file",
+      "description": "Absolute owner-private non-symlink file outside repositories. Use instead of inline app_password; restrict Windows ACLs.",
+      "sensitive": true,
+      "required": false
+    },
+    "read_only": {
+      "type": "boolean",
+      "title": "Read only",
+      "description": "Hide and directly refuse mutations, stateful Forms report and file writes.",
+      "default": false,
+      "required": false
+    },
+    "allow_destructive": {
+      "type": "boolean",
+      "title": "Allow explicitly confirmed operations",
+      "description": "False refuses confirmed operations too.",
+      "default": true,
+      "required": false
+    }
+  },
+  "compatibility": {
+    "platforms": [
+      "darwin",
+      "win32",
+      "linux"
+    ],
+    "runtimes": {
+      "node": ">=22"
+    }
+  }
+}
