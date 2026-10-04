@@ -1,12 +1,13 @@
 {
   "name": "@thenavidm/fluent-wp-mcp-cli",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "Remote Fluent WordPress task CLI and local MCP for current FluentCRM, FluentCommunity and Fluent Forms, isolated site profiles, reviewed cross-plugin tasks and private snapshots.",
   "type": "module",
   "main": "./dist/index.js",
   "bin": {
     "fluent-wp-mcp": "dist/index.js",
-    "fluent-wp-cli": "dist/index.js"
+    "fluent-wp-cli": "dist/index.js",
+    "fluent-wp-mcp-cli": "dist/npx.js"
   },
   "engines": {
     "node": ">=22"
