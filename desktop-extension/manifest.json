@@ -2,7 +2,7 @@
   "manifest_version": "0.2",
   "name": "fluent-wp",
   "display_name": "Fluent WordPress MCP Server & CLI",
-  "version": "2.0.1",
+  "version": "3.0.0",
   "description": "54 shared native tools and remote tasks for FluentCRM, FluentCommunity and Fluent Forms with private site profiles and cross-plugin snapshots.",
   "long_description": "Remote local stdio companion with reviewed native arguments, mandatory local confirmation for mutations/stateful reports/private files, and direct read-only enforcement. Official plugin MCPs and WP-CLI commands are distinct options. Application Password authentication; no browser/session import or automatic retries.",
   "author": {

@@ -33,7 +33,7 @@ Body flags, payload and absolute non-symlink <=1 MiB payload_file are exclusive.
 
 # Exit codes
 
-0 response/receipt returned,2 usage/policy refusal,3 missing,4 auth/permissions,5 API/network/unknown outcome,7 rate limit,10 private configuration. Inspect partial/unknown outcomes before any explicitly requested retry.
+0 response/receipt returned,1 unexpected error,2 usage/policy refusal, an unknown command or a hidden write,3 missing,4 auth/permissions,5 API/network/unknown outcome,7 rate limit,10 private configuration. Over MCP the person approves each write in the client's own prompt or form; confirm:true counts only where the client cannot ask. Inspect partial/unknown outcomes before any explicitly requested retry.
 
 # MCP
 

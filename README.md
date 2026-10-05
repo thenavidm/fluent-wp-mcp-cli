@@ -11,7 +11,7 @@
 
 Fluent WordPress MCP server and CLI for Codex and AI agents. 54 shared tools for current FluentCRM, FluentCommunity and Fluent Forms, isolated private sites, reviewed cross-plugin tasks and bounded snapshots.
 
-One package provides a task CLI, local stdio MCP and versioned desktop bundle. Built and maintained by [Navid Moazzez](https://navid.me?utm_source=github&utm_medium=referral&utm_campaign=fluent-wp-mcp-cli&utm_content=readme). Complete setup: [navid.me](https://navid.me/mcp-servers/fluent-wp?utm_source=github&utm_medium=referral&utm_campaign=fluent-wp-mcp-cli&utm_content=guide).
+One package provides a task CLI, local stdio MCP and versioned desktop bundle. Built and maintained by [Navid Moazzez](https://navid.me?utm_source=github&utm_medium=referral&utm_campaign=fluent-wp-mcp-cli&utm_content=readme). Built on [Slipway](https://github.com/thenavidm/slipway), which turns one definition of each tool into the MCP server and the CLI. Complete setup: [navid.me](https://navid.me/mcp-servers/fluent-wp?utm_source=github&utm_medium=referral&utm_campaign=fluent-wp-mcp-cli&utm_content=guide).
 
 <img src="https://cdn.navid.me/repos/fluent-wp-mcp-cli-retina.gif" alt="Illustrated Fluent WordPress workflow using the shared navid.me terminal" width="520">
 
@@ -154,7 +154,7 @@ fluent-wp-cli doctor --network
 fluent-wp-cli fcrm-list-contacts --per-page 1 --agent --select data.id
 ```
 
-Credential-free discovery, native request fixtures and direct full/read-only guard checks are separate from actual provider validation. A positive current-user read establishes neither ownership nor every Fluent permission. Authenticated plugin outcomes, desktop GUI installation and matched successful Codex task/token results remain unverified until independently exercised.
+Credential-free discovery, native request fixtures and direct full/read-only guard checks are separate from actual provider validation. A positive current-user read establishes neither ownership nor every Fluent permission. Authenticated plugin outcomes and desktop GUI installation remain unverified until independently exercised. Section 7 has the measured token costs.
 
 ## 6. Output, flags and exit codes
 
@@ -162,7 +162,7 @@ Native JSON is preserved after recognized credential redaction; ordinary records
 
 | Flag | Behavior |
 | --- | --- |
-| --agent | Compact JSON/no prompts/color; never approval |
+| --agent | Compact JSON and no prompts; never confirms a write |
 | --confirm | Explicit approval for exactly requested confirmed work |
 | --account LABEL | Exact private site profile |
 | --select a,b.c | Filter returned fields locally |
@@ -174,7 +174,8 @@ Native JSON is preserved after recognized credential redaction; ordinary records
 | Exit | Meaning |
 | --- | --- |
 | 0 | Native response/receipt returned; inspect status and downstream effects |
-| 2 | Usage, schema or refused/unapproved operation |
+| 1 | Unexpected error |
+| 2 | Usage, schema, a refused or unapproved operation, an unknown command or a hidden write |
 | 3 | Not found |
 | 4 | Authentication/permissions |
 | 5 | API/network or unknown mutation outcome |
@@ -183,7 +184,21 @@ Native JSON is preserved after recognized credential redaction; ordinary records
 
 ## 7. MCP or CLI and token cost
 
-Both surfaces call the same MCP handlers and guard. MCP clients choose their own tool discovery/loading strategy. The CLI supports selected command help/schema and compact results; it also consumes command/help/output/reasoning tokens. Fresh matched successful Codex task/token measurements remain pending. No percentage, character estimate, other-client figure or fixture is represented as a measured Codex saving. Record actual API usage, client/model/version/date, discovery settings, caching, latency, provider calls and equivalent successful outputs before publishing a comparison.
+Both surfaces call the same MCP handlers and guard. MCP clients choose their own tool discovery/loading strategy. The CLI supports selected command help/schema and compact results; it also consumes command/help/output/reasoning tokens.
+
+Measured on 2026-10-05 against 2.0.1, with Claude Code 2.1.286 on Claude Opus 5.5 (one short prompt with and without the server connected, the difference read from the API's own usage figures) and Codex 0.159.3 on gpt-6.1-sol:
+
+| Cost | 2.0.1 | 3.0.0 |
+| --- | --- | --- |
+| Claude Code, every tool loaded, every message | 26,470 | 25,728 |
+| Claude Code's default, tool search, every message | 1,295 | 1,294 |
+| `SKILL.md`, read once | 1,325 | 1,385 |
+| Codex over the CLI, one task, median of five | 150,331 | 83,099 |
+| Codex over MCP, the same task, median of five | 76,977 | 76,746 |
+
+The task was "find the command that adds a note to a CRM contact, and the flags it requires". Every tool loaded costs less because a contact's fields and a note's, each written out twice as their own arguments and inside `payload`, are now written once and referred to. Over the CLI, every 2.0.1 run guessed at least once, with `commands`, `crm --help` or a bare `schema`, because 2.0.1's help never said how to list commands, then read the whole command list and the command's schema as well as its help; every extra step carries the whole conversation forward. Every 3.0.0 run asked `which` and read one command's help. `SKILL.md` costs 60 more because it now says how approval works over MCP and lists every exit code.
+
+Tool-list bytes or characters divided by four are not API usage, and no other offering was measured.
 
 ## 8. Every tool and argument
 
@@ -337,7 +352,7 @@ Kind: **Confirmed operation**. Native plugin/user permissions apply.
 | `double_optin` | Optional; native body and guard rules still apply | boolean | Send double opt-in confirmation email. |
 | `__force_update` | Optional; native body and guard rules still apply | string | If `yes`, updates existing contact with the same email instead of failing. enum: ["yes", "no"]. |
 | `account` | Optional; native body and guard rules still apply | string | Exact configured private account profile label; not a tenant or provider account ID. |
-| `confirm` | Optional; native body and guard rules still apply | boolean | Must be true for the requested mutation or exclusive private output file. |
+| `confirm` | Optional; native body and guard rules still apply | boolean | Set true only when the user asked for exactly this action. |
 | `payload` | Optional; native body and guard rules still apply | object | Complete native JSON body; do not mix with body flags or payload_file. Arrays use repeated JSON object flags or a whole native array in a private file. additionalProperties: false. required: ["email", "status"]. |
 | `payload.email` | Yes | string | Contact email address. Must be unique unless `__force_update` is `yes`. format: "email". |
 | `payload.status` | Yes | string | Contact subscription status. enum: ["subscribed", "pending", "unsubscribed", "bounced", "complained"]. |
@@ -410,7 +425,7 @@ Kind: **Confirmed operation**. Native plugin/user permissions apply.
 | `subscriber.detach_lists` | Optional; native body and guard rules still apply | array | List IDs to detach. |
 | `subscriber.detach_lists[]` | Per item when supplied | integer | Array item schema. |
 | `account` | Optional; native body and guard rules still apply | string | Exact configured private account profile label; not a tenant or provider account ID. |
-| `confirm` | Optional; native body and guard rules still apply | boolean | Must be true for the requested mutation or exclusive private output file. |
+| `confirm` | Optional; native body and guard rules still apply | boolean | Set true only when the user asked for exactly this action. |
 | `payload` | Optional; native body and guard rules still apply | object | Complete native JSON body; do not mix with body flags or payload_file. Arrays use repeated JSON object flags or a whole native array in a private file. additionalProperties: false. required: ["subscriber"]. |
 | `payload.subscriber` | Yes | object | Contact data can be nested inside a `subscriber` object or passed at the top level. minProperties: 1. additionalProperties: false. |
 | `payload.subscriber.email` | Optional; native body and guard rules still apply | string | Email address (must be unique). format: "email". |
@@ -492,7 +507,7 @@ Kind: **Confirmed operation**. Native plugin/user permissions apply.
 | `note.type` | Yes | string | Note type. enum: ["note", "call", "email", "meeting", "activity"]. |
 | `note.created_at` | Optional; native body and guard rules still apply | string | Custom creation date. Defaults to current time if not provided. format: "date-time". |
 | `account` | Optional; native body and guard rules still apply | string | Exact configured private account profile label; not a tenant or provider account ID. |
-| `confirm` | Optional; native body and guard rules still apply | boolean | Must be true for the requested mutation or exclusive private output file. |
+| `confirm` | Optional; native body and guard rules still apply | boolean | Set true only when the user asked for exactly this action. |
 | `payload` | Optional; native body and guard rules still apply | object | Complete native JSON body; do not mix with body flags or payload_file. Arrays use repeated JSON object flags or a whole native array in a private file. additionalProperties: false. required: ["note"]. |
 | `payload.note` | Yes | object | Actual shared argument definition. required: ["title", "description", "type"]. |
 | `payload.note.title` | Yes | string | Note title. |
@@ -866,7 +881,7 @@ Kind: **Confirmed operation**. Native plugin/user permissions apply.
 | `survey.type` | Optional; native body and guard rules still apply | string | Actual shared argument definition. |
 | `title` | Optional; native body and guard rules still apply | string | Actual shared argument definition. |
 | `account` | Optional; native body and guard rules still apply | string | Exact configured private account profile label; not a tenant or provider account ID. |
-| `confirm` | Optional; native body and guard rules still apply | boolean | Must be true for the requested mutation or exclusive private output file. |
+| `confirm` | Optional; native body and guard rules still apply | boolean | Set true only when the user asked for exactly this action. |
 | `payload` | Optional; native body and guard rules still apply | object | Complete native JSON body; do not mix with body flags or payload_file. Arrays use repeated JSON object flags or a whole native array in a private file. additionalProperties: false. required: ["message"]. |
 | `payload.space` | Optional; native body and guard rules still apply | string | Actual shared argument definition. |
 | `payload.topic_ids` | Optional; native body and guard rules still apply | array | Actual shared argument definition. |
@@ -915,7 +930,7 @@ Kind: **Confirmed operation**. Native plugin/user permissions apply.
 | `message` | Optional; native body and guard rules still apply | string | Actual shared argument definition. minLength: 1. |
 | `title` | Optional; native body and guard rules still apply | string | Actual shared argument definition. |
 | `account` | Optional; native body and guard rules still apply | string | Exact configured private account profile label; not a tenant or provider account ID. |
-| `confirm` | Optional; native body and guard rules still apply | boolean | Must be true for the requested mutation or exclusive private output file. |
+| `confirm` | Optional; native body and guard rules still apply | boolean | Set true only when the user asked for exactly this action. |
 | `payload` | Optional; native body and guard rules still apply | object | Complete native JSON body; do not mix with body flags or payload_file. Arrays use repeated JSON object flags or a whole native array in a private file. additionalProperties: false. required: ["message"]. |
 | `payload.new_space_id` | Optional; native body and guard rules still apply | string | Actual shared argument definition. |
 | `payload.move_to_profile` | Optional; native body and guard rules still apply | string | Actual shared argument definition. |
@@ -952,7 +967,7 @@ Kind: **Confirmed operation**. Native plugin/user permissions apply.
 | --- | --- | --- | --- |
 | `feed_id` | Yes | integer | Feed ID extracted from the URL path. minimum: 1. |
 | `account` | Optional; native body and guard rules still apply | string | Exact configured private account profile label; not a tenant or provider account ID. |
-| `confirm` | Optional; native body and guard rules still apply | boolean | Must be true for the requested mutation or exclusive private output file. |
+| `confirm` | Optional; native body and guard rules still apply | boolean | Set true only when the user asked for exactly this action. |
 
 ```bash
 fluent-wp-cli fc-delete-feed --help
@@ -992,7 +1007,7 @@ Kind: **Confirmed operation**. Native plugin/user permissions apply.
 | `feed_id` | Yes | integer | Feed ID extracted from the URL path. minimum: 1. |
 | `comment` | Optional; native body and guard rules still apply | string | Actual shared argument definition. minLength: 1. |
 | `account` | Optional; native body and guard rules still apply | string | Exact configured private account profile label; not a tenant or provider account ID. |
-| `confirm` | Optional; native body and guard rules still apply | boolean | Must be true for the requested mutation or exclusive private output file. |
+| `confirm` | Optional; native body and guard rules still apply | boolean | Set true only when the user asked for exactly this action. |
 | `payload` | Optional; native body and guard rules still apply | object | Complete native JSON body; do not mix with body flags or payload_file. Arrays use repeated JSON object flags or a whole native array in a private file. additionalProperties: false. required: ["comment"]. |
 | `payload.comment` | Yes | string | Actual shared argument definition. minLength: 1. |
 | `payload_file` | Optional; native body and guard rules still apply | string | Absolute regular non-symlink JSON body file, at most 1 MiB. Cannot mix with payload/body flags. minLength: 1. |
@@ -1017,7 +1032,7 @@ Kind: **Confirmed operation**. Native plugin/user permissions apply.
 | `comment_id` | Yes | integer | Comment ID extracted from the URL path. minimum: 1. |
 | `comment` | Optional; native body and guard rules still apply | string | Actual shared argument definition. minLength: 1. |
 | `account` | Optional; native body and guard rules still apply | string | Exact configured private account profile label; not a tenant or provider account ID. |
-| `confirm` | Optional; native body and guard rules still apply | boolean | Must be true for the requested mutation or exclusive private output file. |
+| `confirm` | Optional; native body and guard rules still apply | boolean | Set true only when the user asked for exactly this action. |
 | `payload` | Optional; native body and guard rules still apply | object | Complete native JSON body; do not mix with body flags or payload_file. Arrays use repeated JSON object flags or a whole native array in a private file. additionalProperties: false. required: ["comment"]. |
 | `payload.comment` | Yes | string | Actual shared argument definition. minLength: 1. |
 | `payload_file` | Optional; native body and guard rules still apply | string | Absolute regular non-symlink JSON body file, at most 1 MiB. Cannot mix with payload/body flags. minLength: 1. |
@@ -1041,7 +1056,7 @@ Kind: **Confirmed operation**. Native plugin/user permissions apply.
 | `feed_id` | Yes | integer | Feed ID extracted from the URL path. minimum: 1. |
 | `comment_id` | Yes | integer | Comment ID extracted from the URL path. minimum: 1. |
 | `account` | Optional; native body and guard rules still apply | string | Exact configured private account profile label; not a tenant or provider account ID. |
-| `confirm` | Optional; native body and guard rules still apply | boolean | Must be true for the requested mutation or exclusive private output file. |
+| `confirm` | Optional; native body and guard rules still apply | boolean | Set true only when the user asked for exactly this action. |
 
 ```bash
 fluent-wp-cli fc-delete-comment --help
@@ -1063,7 +1078,7 @@ Kind: **Confirmed operation**. Native plugin/user permissions apply.
 | `react_type` | Optional; native body and guard rules still apply | string | Actual shared argument definition. |
 | `remove` | Optional; native body and guard rules still apply | string | Actual shared argument definition. |
 | `account` | Optional; native body and guard rules still apply | string | Exact configured private account profile label; not a tenant or provider account ID. |
-| `confirm` | Optional; native body and guard rules still apply | boolean | Must be true for the requested mutation or exclusive private output file. |
+| `confirm` | Optional; native body and guard rules still apply | boolean | Set true only when the user asked for exactly this action. |
 | `payload` | Optional; native body and guard rules still apply | object | Complete native JSON body; do not mix with body flags or payload_file. Arrays use repeated JSON object flags or a whole native array in a private file. additionalProperties: false. |
 | `payload.react_type` | Optional; native body and guard rules still apply | string | Actual shared argument definition. |
 | `payload.remove` | Optional; native body and guard rules still apply | string | Actual shared argument definition. |
@@ -1384,7 +1399,7 @@ Kind: **Confirmed operation**. Native plugin/user permissions apply.
 | `statuses` | Optional; native body and guard rules still apply | array | Actual shared argument definition. |
 | `statuses[]` | Per item when supplied | string | Array item schema. |
 | `account` | Optional; native body and guard rules still apply | string | Exact configured private account profile label; not a tenant or provider account ID. |
-| `confirm` | Optional; native body and guard rules still apply | boolean | Must be true for the requested mutation or exclusive private output file. |
+| `confirm` | Optional; native body and guard rules still apply | boolean | Set true only when the user asked for exactly this action. |
 
 ```bash
 fluent-wp-cli ff-form-report --help
@@ -1504,7 +1519,7 @@ Kind: **Confirmed operation**. Local helper semantics apply.
 | `tasks[].tool` | Yes | string | Actual shared argument definition. enum: ["fcrm_create_contact", "fcrm_update_contact", "fcrm_add_contact_note", "fc_create_feed", "fc_update_feed", "fc_delete_feed", "fc_create_comment", "fc_update_comment", "fc_delete_comment", "fc_react_to_feed"]. |
 | `tasks[].arguments` | Yes | object | Native arguments without account, confirm, payload_file or output_file; complete payload is allowed. |
 | `account` | Optional; native body and guard rules still apply | string | Exact configured private site profile label, not a verified site-owner identity. |
-| `confirm` | Optional; native body and guard rules still apply | boolean | Explicit approval for this exact requested work or new private file. |
+| `confirm` | Optional; native body and guard rules still apply | boolean | Set true only when the user asked for exactly this action. |
 | `review_sha256` | Yes | string | Exact preview_site_batch hash for unchanged tasks, site profile and schema. pattern: "^[a-f0-9]{64}$". |
 
 ```bash
@@ -1544,7 +1559,7 @@ Kind: **Confirmed operation**. Local helper semantics apply.
 | `tasks[].tool` | Yes | string | Actual shared argument definition. enum: ["fcrm_dashboard_stats", "fcrm_list_contacts", "fcrm_get_contact", "fcrm_search_contacts", "fcrm_contact_notes", "fcrm_list_tags", "fcrm_list_lists", "fcrm_list_campaigns", "fcrm_get_campaign", "fcrm_campaign_stats", "fcrm_list_sequences", "fcrm_list_automations", "fcrm_automation_report", "fcrm_contact_emails", "fc_list_spaces", "fc_get_space", "fc_list_feeds", "fc_get_feed", "fc_list_comments", "fc_list_courses", "fc_get_course", "fc_course_students", "fc_course_lessons", "fc_space_members", "fc_get_profile", "fc_scheduled_posts", "fc_analytics_top_members", "fc_analytics_top_commenters", "fc_analytics_top_post_starters", "fc_analytics_member_activity", "ff_list_forms", "ff_get_form", "ff_form_fields", "ff_list_submissions", "ff_form_stats", "get_current_user"]. |
 | `tasks[].arguments` | Yes | object | Native arguments without account, confirm, payload_file or output_file; complete payload is allowed. |
 | `account` | Optional; native body and guard rules still apply | string | Exact configured private site profile label, not a verified site-owner identity. |
-| `confirm` | Optional; native body and guard rules still apply | boolean | Explicit approval for this exact requested work or new private file. |
+| `confirm` | Optional; native body and guard rules still apply | boolean | Set true only when the user asked for exactly this action. |
 | `output_file` | Yes | string | Absolute new file in an existing private directory; restrict Windows ACLs separately. minLength: 1. |
 
 ```bash
@@ -3031,16 +3046,18 @@ fluent-wp-cli fcrm-list-contacts --account work --per-page 1 --agent
 
 ## 12. Writing safely
 
-All 13 mutations/stateful reports/private file operations require --confirm or confirm:true through the same house guard. FLUENT_WP_READ_ONLY=1 exposes only 41 reads and directly refuses hidden confirmed calls. FLUENT_WP_ALLOW_DESTRUCTIVE=0 independently refuses confirmed operations. --agent/--yes control formatting and never authorize.
+All 13 mutations/stateful reports/private file operations require --confirm or confirm:true through the same write guard. FLUENT_WP_READ_ONLY=1 exposes only 41 reads and directly refuses hidden confirmed calls. FLUENT_WP_ALLOW_DESTRUCTIVE=0 independently refuses confirmed operations. --agent/--yes control formatting and never authorize.
 
-Only the selected trusted HTTPS site and reviewed REST paths are allowed. No credentials in URLs, redirects, arbitrary endpoint requests, browser/session import, automatic retries or vendor code execution occurs. Local preview hashes do not replace native permissions, site-state review or human authorization. The audit log records static operation/guard decisions without request bodies; append failures are best effort, not guaranteed compliance logging.
+Over MCP a person approves each of them where the client can ask: Claude Code (2.1.246 and later) shows its own prompt, and a client that can show forms asks with an approval form whose one box starts unticked. Each approval is signed, bound to that exact call and works once. Where a client can do neither, the model's confirm:true counts. FLUENT_WP_CONFIRM=model makes confirm:true enough everywhere, for an agent with no person to ask.
+
+Only the selected trusted HTTPS site and reviewed REST paths are allowed. No credentials in URLs, redirects, arbitrary endpoint requests, browser/session import, automatic retries or vendor code execution occurs. Local preview hashes do not replace native permissions, site-state review or human authorization. The audit log records static operation/guard decisions and who approved each call, then whether it was done or failed, without request bodies; append failures are best effort, not guaranteed compliance logging.
 
 CRM contacts and opt-ins, Community comments/reactions/announcements and stored report metadata can affect real users. Read-only applies to actual side effects, including the GET Forms report that may migrate metadata. No automatic delete, send, database maintenance or rollback is added after a user requests a narrower action.
 
 
 ## 13. How the two surfaces work
 
-The unchanged house CLI bridge invokes the actual local MCP server through the SDK in-memory transport. Commands, schema discovery, validation, site selection, handlers and WriteGuard are shared; there is no separate CLI API client or second tool implementation. One catalogue powers all54 tools and commands. Helpers compile only the selected allowlisted native routes, with whole-batch prevalidation before any provider request.
+[Slipway](https://github.com/thenavidm/slipway) builds the MCP server, over stdio or `--http`, and the CLI from each tool's one definition. Commands, schema discovery, validation, site selection, handlers and the write guard are shared; there is no separate CLI API client or second tool implementation. One catalogue powers all 54 tools and commands. Helpers compile only the selected allowlisted native routes, with whole-batch prevalidation before any provider request.
 
 ## 14. Your data
 
@@ -3063,8 +3080,14 @@ Request and select only the necessary records. Treat WordPress content, form sub
 | FLUENT_WP_READ_ONLY | 1/true hides and directly refuses 13 confirmed operations | Safety |
 | FLUENT_WP_ALLOW_DESTRUCTIVE | 0/false refuses all confirmed operations; default true | Safety |
 | FLUENT_WP_AUDIT_LOG | Private best-effort JSONL guard log, no payloads | Safety |
-| FLUENT_WP_REQUEST_TIMEOUT_MS | 30000 default; integer100–300000; no automatic retry | Tuning |
-| FLUENT_WP_MIN_REQUEST_INTERVAL_MS | 250 default; integer0–10000; process spacing only | Tuning |
+| FLUENT_WP_REQUEST_TIMEOUT_MS | 30000 default; integer 100–300000; no automatic retry | Tuning |
+| FLUENT_WP_MIN_REQUEST_INTERVAL_MS | 250 default; integer 0–10000; process spacing only | Tuning |
+| FLUENT_WP_CONFIRM | `human` by default; `model` lets confirm:true alone approve over MCP, for an agent with no person to ask | Safety |
+| FLUENT_WP_SURFACE | `full` by default; `search` lists three tools that find, describe and run the rest | Tuning |
+| FLUENT_WP_TOOL_TIMEOUT_MS | Give up on any tool after this long | Tuning |
+| FLUENT_WP_HTTP_PORT, FLUENT_WP_HTTP_HOST, FLUENT_WP_HTTP_TOKEN | For `--http`: port 8787 and host 127.0.0.1 by default; any other host needs the bearer token | HTTP |
+| FLUENT_WP_HTTP_ALLOWED_ORIGINS | Comma-separated browser origins allowed to call `--http`; a page from any other site is refused | HTTP |
+| FLUENT_WP_DEBUG | `1` prints debug lines on stderr | Tuning |
 
 ## 16. Updates and removal
 
@@ -3123,17 +3146,18 @@ The useful addition is one remote task CLI/local MCP covering selected CRM, Comm
 | Ordered changes | Local preview hash, explicit confirmation, stop on first failure | Official Forms has actual provider-state tokens and idempotency guards |
 | Several sites | Independent URL/user/password per exact profile; no global fallback | Reviewed community product configs do not expose the same named-site profiles |
 | Private snapshots | 1–20 selected reads, exclusive new file, bounded response sizes | Not a complete backup, migration, atomic database snapshot or native CSV export |
-| Context cost | Codex actual task/token measurement pending | Dynamic community discovery already exists; no percentage claimed |
+| Context cost | Measured against 2.0.1 in section 7: a Codex discovery task took a median of 83,099 input tokens over the CLI and 76,746 over MCP | Dynamic community discovery already exists; not measured |
 
 ## 19. Versions and migration
 
 | Component | Current reviewed version |
 | --- | --- |
-| Package/desktop manifest | 2.0.0 |
+| Package/desktop manifest | 3.0.0 |
 | Node support | 22 or newer |
 | Native API namespaces | CRM v2; Community v2; Forms v1; WordPress v2 |
 | Forms source | 6.2.14 at pinned commit |
-| MCP SDK | 1.32.0 locked |
+| Slipway | 0.1.17 |
+| MCP TypeScript SDK, through Slipway | 2.3.0 |
 | Schema validators | Ajv8.20.0; ajv-formats3.0.1 locked |
 | Source provenance | Five pinned upstream repos, reviewed2026-10-03 |
 
@@ -3279,7 +3303,7 @@ This subset reads CRM campaign/automation information and Community scheduled po
 <details>
 <summary><b>Is the CLI cheaper in tokens?</b></summary>
 
-Matched successful Codex MCP-versus-CLI tasks have not been measured for this release. Publish actual reported usage, client/model/version, discovery strategy, equivalent outputs and latency before claiming savings. Source counts or character estimates are insufficient.
+It depends on the client. In Codex, finding the command that adds a note to a CRM contact took a median of 83,099 input tokens over the CLI and 76,746 over MCP. In Claude Code the CLI costs nothing until it is used, plus about 1,385 tokens for `SKILL.md` once, where the server costs about 1,294 tokens a message with tool search and 25,728 with every tool loaded. Section 7 has how each was measured.
 
 </details>
 
@@ -3319,7 +3343,7 @@ If this is useful, star the repo and come say hi on [X](https://x.com/thenavidm)
 
 ## Dependencies
 
-Runtime: MCP TypeScript SDK, Ajv and ajv-formats. Development: TypeScript, Vitest, Vite and MCPB. Exact locked versions appear above. Packaging tools are excluded from desktop runtime.
+Runtime: Slipway, which brings the MCP TypeScript SDK, plus Ajv and ajv-formats. Development: TypeScript, Vitest, Vite and MCPB. Exact locked versions appear above. Packaging tools are excluded from desktop runtime.
 
 ## License
 
